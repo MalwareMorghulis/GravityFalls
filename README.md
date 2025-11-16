@@ -1,4 +1,7 @@
 ## About
+
+DOI: 10.5281/zenodo.17624570
+
 Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s and a favored meme: "It's worthless!" and to differentiate from Pi-Hole's Gravity process.
 
 DNS Sinkhole list of FQDNs from LevelBlue (AlienVault) OTX pivots by "MalwareMorghulis"
@@ -39,6 +42,7 @@ UPDATE: Based on available open-source reporting, these campaign activity cluste
 5) Hunt.io
 
 ## Disclaimer
+- Please cite Adam Dorian Wong or @MalwareMorghulis for use.
 - These lists are provided "as-is". This may break infrastructure because some nameservers could be in this list. Fork & prune or use at your own risk.
 - **WARNING**: Please modify these TLD blocks as necessary and in your own repo. You have to point your PiHole to your own repo for any custom TLD blocklists because these TLD lists will block almost everything (even *.com, etc).
 - **NOTE**: There are also way more efficient methods (ie: geolocation lists) or optimized entries to add TLDs into sinkholes, such as in single-line groupings with pipe '|' characters.
