@@ -22,6 +22,7 @@ UPDATE: Based on available open-source reporting, these campaign activity cluste
 
 ## Scam Tracker - Inconclusive
 - Empty Promise: Fake recruiter spam, from emails, asking the user to contact them over third-party messengers: Telegram, WhatsApp, etc.
+- Purple Rain: Indigo marketing and fake account notifications, including aliases Henry Fields or Daryl Huff.
 
 ## Generic List
 - Blocklist: Generic blocklist for sinkholing (some overlap here, but will eventually be independent from the 3x below).
@@ -31,10 +32,10 @@ UPDATE: Based on available open-source reporting, these campaign activity cluste
 - TLD_IANA_CountryCodes.txt: Contains ALL* (at least in 2024) Country Code TLDs (ccTLDs) authorized by IANA for blocking entire swaths of the Internet.
 
 ## Special Thanks
-1) DomainTools - for your support and helping me stay in the fight! The IRIS Investigate tool is amazing and I've been using it for expanding and long-term analysis in the DGA clusters.
-2) ExtraHop - for giving me the time & opportunity to pursue these side-hobby research objectives!
+1) **DomainTools** - for your support and helping me stay in the fight! The IRIS Investigate tool is amazing and I've been using it for expanding and long-term analysis in the DGA clusters.
+2) **ExtraHop** - for giving me the time & opportunity to pursue these side-hobby research objectives!
 
-### Honorable Mentions - Thank You for your support!
+### Honorable Mentions - Thank you for your support!
 1) Sublime Security
 2) Epeios
 3) Daniel P at Malpedia
