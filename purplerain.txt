@@ -1,0 +1,28 @@
+# ------------------------------------[UPDATE]--------------------------------------
+#
+# Title: purplerain.txt
+# Expires: 1 day
+# License: GNU GPLv3
+#
+# -------------------------------------[INFO]---------------------------------------
+#
+# purplerain.txt
+# Domains belonging to a spammer utilizing Henry Fields, Daryl Huff aliases or Indigo marketing scams.
+# These domains typically have info@DOMAIN.
+#
+# Note: this list may not have all activity seen in OTX due to merge issues.
+#
+# Created: 20260105
+# Updated: 20260105
+#
+# ------------------------------------[DOMAINS]------------------------------------
+
+# 20260105
+0.0.0.0 mediainsightnetwork.com
+0.0.0.0 delivermessagenow.com
+0.0.0.0 hamiltonexpert.net
+0.0.0.0 pearceadvisor.net
+0.0.0.0 relaytheupdate.com
+0.0.0.0 newsaxisnetwork.com
+0.0.0.0 changelogcloud.com
+0.0.0.0 newsinsightcentral.com
