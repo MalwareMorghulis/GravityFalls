@@ -40,8 +40,14 @@
 -- $ sudo snap install postman
 --- Open Postman and point to http://127.0.0.1:80
 --- Provide input files through Postman.
+---- HTTP Method: POST
+---- HTTP URL: http://127.0.0.1:80/predict
+---- HTTP Body Type: form-data
+---- Body Key (typed): file
+---- Body Key Type (dropdown option): File
+---- Body Value (selected file): INPUT_FILE
 ---- **NOTE**: the input file is just raw text row-by-row list of domains (input does not have a header line).
----- **NOTE**: When using Postman, select the body tab under the GET request field. Check the radio button for "form-data". The Key-Value Table will appear. Key name must be "file" (lowercase), but Postman also provides a dropdown within the same box. Set the Key field's dropbox with type: "File" (capitalized). In the Value field, you can add the DGA analysis file with the "Select Files" button. Then click "SEND" to submit the DGA analysis file to DGA_Detection Docker instance on testbed workstation. The response will return as JSON.
+---- **Details**: When using Postman, select the body tab under the GET request field. Check the radio button for "form-data". The Key-Value Table will appear. Key name must be "file" (lowercase), but Postman also provides a dropdown within the same box. Set the Key field's dropbox with type: "File" (capitalized). In the Value field, you can add the DGA analysis file with the "Select Files" button. Then click "SEND" to submit the DGA analysis file to DGA_Detection Docker instance on testbed workstation. The response will return as an array in JSON.
 
 ## COSSAS DGAD Docker
 - $ sudo docker pull registry.gitlab.com/cossas/dgad:4.1.1 -OR- $ sudo docker image save -o cossas_dgad.tar registry.gitlab.com/cossas/dgad:4.1.1 # TO SAVE LOCALLY
