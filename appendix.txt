@@ -1,0 +1,54 @@
+# Appendix: Replication of Study
+
+# Virtual Lab Specifications
+- VMware Workstation Pro 17.6.2 or VirtualBox
+- Ubuntu Desktop 24.04.03 LTS 64-bit (amd64)
+- CPU: 2 core, 2 processor
+- RAM: 8GB
+- Storage: 120 GB
+- vNIC: Bridged Mode (does not matter)
+- General Rule-of-Thumb for Type-2 Hypervisors: Ensure that the VM has no more than 50\% of all physical resources allocated. Due to operating both the Guest and Host OS simultaneously.
+- VMware Workstation Pro was free for personal use through Broadcom, as of November 2024.
+
+# Install Tool Dependencies
+## Python, Git, Repo Refresh
+- $ sudo apt update
+- $ sudo apt install git
+- $ sudo apt install python3-pip
+- $ sudo apt install python-venv
+
+## Setup Docker
+- Download Docker Desktop (*.deb) onto the VM from Docker Desktop: https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+
+# Install DGA Detection Tools
+## Install Docker Desktop
+- $ sudo apt install ./docker-desktop-amd64.deb
+- # Docker Docs: https://docs.docker.com/desktop/setup/install/linux/ubuntu/
+
+## Install Exp0se on Github
+- $ git clone https://github.com/exp0se/dga_detector.git
+- $ cd dga_detector/
+- $ python -m venv .venv
+- $ source .venv/bin/activate
+- $ (venv) python dga_detector.py -f FILE
+
+## DGA_Detection by MiaWallace0618 on Github: https://github.com/miaWallace0618/DGA_Detection
+- Download the Pre-Built Docker Image from Author's Pre-Built Docker Image on Google Drive - https://drive.google.com/file/d/1DXPTtse12P29IwuEX8IdJNiiVWB_OaNS/view?usp=sharing
+- After downloading Google Drive Docker TAR file:
+-- $ sudo docker load < path_to_dga_detection.tar
+-- $ sudo docker run -p 80:80 dga_detection:latest
+-- $ sudo snap install postman
+--- Open Postman and point to http://127.0.0.1:80
+--- Provide input files through Postman.
+---- **NOTE**: the input file is just raw text row-by-row list of domains (input does not have a header line).
+---- **NOTE**: When using Postman, the Body's "form-data" Key name must be "file" (lowercase) but Postman also provides a dropdown in the same field which denotes the type of "File" (capitalized). Then you can set the value of a file in Postman on the testbed workstation.
+
+## COSSAS DGAD Docker
+- $ sudo docker pull registry.gitlab.com/cossas/dgad:4.1.1 -OR- $ sudo docker image save -o cossas_dgad.tar registry.gitlab.com/cossas/dgad:4.1.1 # TO SAVE LOCALLY
+- $ chmod 664 cossas_dgad.tar
+- $ docker load < cossas_dgad.tar
+- # For bulk domains: pipe data to the docker container.
+- $ cat ../807/csv/INPUT.csv | sudo docker run -i registry.gitlab.com/cossas/dgad:4.1.1 client -fmt csv -f - > OUTPUT.json
+-- **NOTE**: This tool expects the input or CSV file to have a header line of "domains".
+-- For 1-off domains run this:
+--- $ sudo docker run registry.gitlab.com/cossas/dgad:4.1.1 client -d DOMAIN
