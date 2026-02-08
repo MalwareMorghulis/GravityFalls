@@ -12,7 +12,9 @@ These monikers for campaign tracking are my own naming convention - unrelated to
 
 Eventually, the lists will be reduced to regexes for maintenance purposes, ease of change-control, and due to UI limitations of LevelBlue OTX.
 
-UPDATE: Based on available open-source reporting, these DGA campaign activity clusters are likely associated with "Smishing Triad" (a cybercriminal group believed to be located in China).
+Based on available open-source reporting, these DGA campaign activity clusters are likely associated with "Smishing Triad" (a cybercriminal group believed to be located in China).
+
+**NOTE**: appendix.txt contains the command-line steps needed to replicate this experiment, due to documentation issues in originating tool source pages.
 
 ## Research Block Lists
 ### DGA Tracker - Attributed to Smishing Triad
