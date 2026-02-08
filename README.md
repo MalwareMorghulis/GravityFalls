@@ -8,14 +8,14 @@ Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s a
 
 ## Research Block Lists
 ### DGA Tracker - Attributed to Smishing Triad
-- Cats Cradle: SMS spearphishing utilizing random characters (approximately 5-9 characters)
-- Double Helix: SMS spearphishing utilizing dual-word concatenation (even words are truncated)
-- Easy Rider: Toll-themed or EZ-Pass themed SMS spearphishing utlizing random character concatenation.
-- Pandoras Box: USPS-themed SMS Spearphishing Domains (typically package tracking or typo-squatting service offerings like Informed Delivery)
+- **Cats Cradle**: SMS spearphishing utilizing random characters (approximately 5-9 characters)
+- **Double Helix**: SMS spearphishing utilizing dual-word concatenation (even words are truncated)
+- **Easy Rider**: Toll-themed or EZ-Pass themed SMS spearphishing utlizing random character concatenation.
+- **Pandoras Box**: USPS-themed SMS Spearphishing Domains (typically package tracking or typo-squatting service offerings like Informed Delivery)
 
 ### Scam Tracker - Inconclusive
-- Empty Promise: Fake recruiter spam, from emails, asking the user to contact them over third-party messengers: Telegram, WhatsApp, etc.
-- Purple Rain: Indigo marketing and fake account notifications, including aliases Henry Fields or Daryl Huff.
+- **Empty Promise**: Fake recruiter spam, from emails, asking the user to contact them over third-party messengers: Telegram, WhatsApp, etc.
+- **Purple Rain**: Indigo marketing and fake account notifications, including aliases Henry Fields or Daryl Huff.
 
 ### Replication & Results
 - See here for the output tables or tested tool replication steps.
