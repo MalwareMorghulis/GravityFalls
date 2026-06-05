@@ -25,16 +25,16 @@ Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s a
 - Please cite Adam Dorian Wong or @MalwareMorghulis and Dr. John Hastings for use.
 
 ### Special Thanks
-1) **DomainTools** - for your support and helping me stay in the fight! The IRIS Investigate tool is amazing and I've been using it for expanding and long-term analysis in the DGA clusters.
+1) Ian Campbell (DT) & **DomainTools** - for your support and helping me stay in the fight! The IRIS Investigate tool and DNSDB Scout are amazing tools! DomainTools has been an amazing supporter through their research program! Their tool has given us capabilities for long-term analysis in the DGA clusters and scalable access to data! Without them, this project wouldn't be possible - so huge thank you!
 2) **ExtraHop** - for giving me the time & opportunity to pursue these side-hobby research objectives!
-3) John Conwell - for supporting samples in helping track later phases of the campaign!
-4) Dr. John Hastings - for supporting the publication of the research!
+3) John Conwell (EH) - for supporting samples in helping track later phases of the campaign!
+4) Dr. John Hastings (DSU) - for supporting the publication of the research!
 
 ### Honorable Mentions - Thank you for your support!
 1) Sublime Security
 2) Epeios
 3) Daniel P at Malpedia
-4) Paul B at MalBeacon
+4) Paul B at MalBeacon (Deception.Pro)
 5) Hunt.io
 
 ### Disclaimer
