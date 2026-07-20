@@ -4,7 +4,7 @@ DOI: 10.5281/zenodo.17624554
 
 Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s and a favored meme: "It's worthless!" and to differentiate from Pi-Hole's Gravity update process. DNS Sinkhole list of FQDNs from LevelBlue (AlienVault) OTX pivots by "MalwareMorghulis". Data was curated from automated and manual pivots to uncover suspicious or potentially hostile infrastructure. These monikers for campaign tracking are my own naming convention - unrelated to CrowdStrike, Mandiant, Palo Alto, etc. They are named for fun based on the TTP observed. Eventually, the lists will be reduced to regexes for maintenance purposes, ease of change-control, and due to UI limitations of LevelBlue OTX. Based on available open-source reporting, these DGA campaign activity clusters are likely associated with "Smishing Triad" (a cybercriminal group believed to be located in China).
 
-**NOTE**: appendix.txt contains the command-line steps needed to replicate this experiment, due to documentation issues in originating tool source pages.
+**NOTE**: 2026_Research_Analysis\appendix.txt contains the command-line steps needed to replicate this experiment, due to documentation issues in originating tool source pages and tool results of the experiment.
 
 ## Research Block Lists
 ### DGA Tracker - Attributed to Smishing Triad
@@ -22,13 +22,14 @@ Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s a
 
 ## Credits
 ### Citations
-- Please cite Adam Dorian Wong or @MalwareMorghulis and Dr. John Hastings for use.
+- Please cite Adam Dorian Wong or @MalwareMorghulis,  Dr. John Hastings, and Dr. Cody Welu for use.
 
 ### Special Thanks
 1) Ian Campbell (DT) & **DomainTools** - for your support and helping me stay in the fight! The IRIS Investigate tool and DNSDB Scout are amazing tools! DomainTools has been an amazing supporter through their research program! Their tool has given us capabilities for long-term analysis in the DGA clusters and scalable access to data! Without them, this project wouldn't be possible - so huge thank you!
 2) **ExtraHop** - for giving me the time & opportunity to pursue these side-hobby research objectives!
 3) John Conwell (EH) - for supporting samples in helping track later phases of the campaign!
-4) Dr. John Hastings (DSU) - for supporting the publication of the research!
+4) Dr. John Hastings (DSU) - for supporting the efforts to publish the research!
+5) Dr. Cody Welu (DSU) - for supporting the efforts to publish the research!
 
 ### Honorable Mentions - Thank you for your support!
 1) Sublime Security
