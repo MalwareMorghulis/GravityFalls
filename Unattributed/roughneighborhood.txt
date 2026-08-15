@@ -1,0 +1,18 @@
+# ------------------------------------[UPDATE]--------------------------------------
+#
+# Title: roughneighborhood.txt
+# Expires: 1 day
+# License: GNU GPLv3
+#
+# -------------------------------------[INFO]---------------------------------------
+#
+# roughneighborhood.txt
+# Contains artifacts from blackmail scams (ie: ) and bitcoin address watchlists.
+#
+#
+# Created: 20241204
+# Updated: 20241204
+#
+# ------------------------------------[WATCHLIST]-----------------------------------
+
+wallet, bc1qajyuuplwfc9mrr5t23r0dx9mjpcqc7avzwlyps;

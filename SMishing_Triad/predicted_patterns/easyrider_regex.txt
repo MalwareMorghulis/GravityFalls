@@ -1,0 +1,120 @@
+# ------------------------------------[UPDATE]--------------------------------------
+#
+# Title: easyrider_regex.txt
+# Expires: 1 day
+# License: GNU GPLv3
+#
+# -------------------------------------[INFO]---------------------------------------
+#
+# easyrider_regex.txt
+# EZPass or toll-themed SMS-based spearphishing C2 domains.
+# See OTX for reference tagged "Easy Rider"
+#   or https://otx.alienvault.com/browse/global/pulses?q=tag:%22Easy%20Rider%22
+#
+# Note: this list may not have all activity seen in OTX due to merge issues.
+#   This set has been condensed into regexes (for known DGA). Original FQDN is
+#   still listed below for archival purposes.
+#
+# This cluster of activity is currently attributed to the SMShing Triad.
+#
+# The DGA pattern was observed to be related and similar in nature to Pandoras Box.
+#
+# Created: 20241225
+# Updated: 20260815
+#
+# Special Thanks to DomainTools for IRIS Investigate and enabling this research!
+# Thanks to John C. for providing IOC samples!
+#
+# URIs observed: 'us', 'pay'
+#
+# ------------------------------------[DOMAINS]-------------------------------------
+
+# 20260323
+0.0.0.0 (^|\.)[a-z]{2}.gov-mkb.cc$
+
+# 20260307
+0.0.0.0 (^|\.)dmv-[a-z]{2}.qubzh.icu$
+0.0.0.0 (^|\.)qubzh.icu$
+
+# 20250807
+0.0.0.0 (^|\.)[a-z]{2}.dmv-[a-z]{3,6}.cc$
+
+# 20250725
+0.0.0.0 (^|\.)tech-invoice-template-[a-z]{5}.top$
+
+# 20250609 - Thanks John C.
+0.0.0.0 (^|\.)[a-z]{2}dot-[a-z]{3}.wang$
+0.0.0.0 (^|\.)[a-z]{2}dot-[a-z]{2}-[a-z]{1}.wang$
+
+
+# 20250609 - DMV Tickets
+0.0.0.0 (^|\.)[a-z]{2}.gov-[a-z]{4}.live$
+
+# 20250609 - DMV Tickets
+0.0.0.0 (^|\.)hdkgra.vip$
+0.0.0.0 (^|\.)mknja.vip$
+0.0.0.0 (^|\.)[a-z]{5}.vip$
+
+# 20250505 - Thank you John C!
+0.0.0.0 (^|\.)com-usa[a-z]{3,4}.world$
+0.0.0.0 (^|\.)com-tollbill[a-z]{1,6}.world$
+0.0.0.0 (^|\.)com-[a-z]{3,16}.world$
+
+# 20250421 - Blanket blocking OBS Huawei Cloud
+0.0.0.0 (^|\.)e-zpass.app$
+0.0.0.0 (^|\.)e-zpass.club$
+0.0.0.0 (^|\.)e-zpass.info$
+0.0.0.0 (^|\.)e-zpass.net$
+0.0.0.0 (^|\.)obs.myhuaweicloud.com$
+0.0.0.0 (^|\.)e-zpass.com-tollbill[a-z]{3}.top$
+0.0.0.0 (^|\.)e-zpass.com-[a-z]{4}.xin$
+0.0.0.0 (^|\.)e-zpass.org-[a-z]{3,7}.top.obs.myhuaweicloud.com$
+0.0.0.0 (^|\.)e-zpass.com-[a-z]{3}.obs.myhuaweicloud.com$
+0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,7}.top.obs.myhuaweicloud.com$
+0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,7}.xin.obs.myhuaweicloud.com$
+#0.0.0.0 (^|\.)e-zpass.com.[a-z]{3,8}.fr.obs.myhuaweicloud.com$
+#0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,8}.cc.obs.myhuaweicloud.com$
+#0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,8}.vip.obs.myhuaweicloud.com$
+#0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,7}-[a-z]{3,7}.vip.obs.myhuaweicloud.com$
+#0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,8}.top.obs.myhuaweicloud.com$
+#0.0.0.0 (^|\.)e-zpass.com-[a-z]{3,7}-[a-z]{3,7}.top.obs.myhuaweicloud.com$
+
+# 20250406 - Observed cutt[.]ly shortener
+0.0.0.0 (^|\.)[a-z]{5}.xyz$
+
+# 20250331
+0.0.0.0 ^secure.payment[a-z]{1,6}.top$
+0.0.0.0 (^|\.)[a-z]{2}gov.com-[a-z]{5}.xin$
+0.0.0.0 (^|\.)ezpass[a-z]{2}.com-tollbill[a-z]{1,4}.xin$
+0.0.0.0 (^|\.)e-zpass[a-z]{2}.com-pay[a-z]{1,4}.top$
+0.0.0.0 (^|\.)thetollroads-paytoll[a-z]{1,4}.world$
+0.0.0.0 (^|\.)thetollroads-tollevasion[a-z]{1,4}.world$
+0.0.0.0 (^|\.)thetollroad-[a-z]{1,4}.xin$
+0.0.0.0 (^|\.)paytoll[a-z]{2}.vip$
+
+# 20250325
+0.0.0.0 (^|\.)ezpass.com-[a-z]{1,6}.xin$
+0.0.0.0 (^|\.)ezpass.org-[a-z]{3}.xin$
+0.0.0.0 (^|\.)e-zpass.org-[a-z]{3}.xin$
+0.0.0.0 (^|\.)ncquickpass.com-[a-z]{3}.xin$
+0.0.0.0 (^|\.)ezpass.com-[a-z]{1,6}.vip$
+0.0.0.0 (^|\.)ezpass.org-[a-z]{3}.vip$
+0.0.0.0 (^|\.)e-zpass.org-[a-z]{3}.vip$
+0.0.0.0 (^|\.)ncquickpass.com-[a-z]{3}.vip$
+0.0.0.0 (^|\.)thetollroads.com-[a-z]{1,3}.xin$
+0.0.0.0 (^|\.)www.org-[a-z]{3}.vip$
+0.0.0.0 chat.ruisheng.info
+0.0.0.0 spurtup.com
+
+# 20250213
+0.0.0.0 (^|\.)com-dmv-invoice[a-z]{2}.top$
+0.0.0.0 (^|\.)invoice[a-z]{1,4}.top$
+0.0.0.0 (^|\.)ezdrive-[a-z]{2}.xin$
+
+# 20250114 - Reordered Regex
+0.0.0.0 (^|\.)com-custo[a-z]{1,7}.top$
+0.0.0.0 (^|\.)com-thetoll[a-z]{1,5}.top$
+0.0.0.0 (^|\.)ezdrivema.com-custo[a-z]{1,6}.top$
+0.0.0.0 (^|\.)ezdrivema.com-thetoll[a-z]{1,5}.top$
+0.0.0.0 (^|\.)ezdrivema.com-[a-z]{1,10}.top$
+0.0.0.0 (^|\.)thetollroads.com-custo[a-z]{1,6}.top$

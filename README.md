@@ -22,14 +22,14 @@ Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s a
 
 ## Credits
 ### Citations
-- Please cite Adam Dorian Wong or @MalwareMorghulis,  Dr. John Hastings, and Dr. Cody Welu for use.
+- For use, please cite Adam Dorian Wong (@MalwareMorghulis) & Dr. John Hastings.
 
 ### Special Thanks
 1) Ian Campbell (DT) & **DomainTools** - for your support and helping me stay in the fight! The IRIS Investigate tool and DNSDB Scout are amazing tools! DomainTools has been an amazing supporter through their research program! Their tool has given us capabilities for long-term analysis in the DGA clusters and scalable access to data! Without them, this project wouldn't be possible - so huge thank you!
 2) **ExtraHop** - for giving me the time & opportunity to pursue these side-hobby research objectives!
 3) John Conwell (EH) - for supporting samples in helping track later phases of the campaign!
 4) Dr. John Hastings (DSU) - for supporting the efforts to publish the research!
-5) Dr. Cody Welu (DSU) - for supporting the efforts to publish the research!
+5) Dr. Cody Welu (DSU) - for supporting the research!
 
 ### Honorable Mentions - Thank you for your support!
 1) Sublime Security

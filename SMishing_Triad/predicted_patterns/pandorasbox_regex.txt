@@ -1,0 +1,45 @@
+# ------------------------------------[UPDATE]--------------------------------------
+#
+# Title: pandorasbox_regex.txt
+# Expires: 1 day
+# License: GNU GPLv3
+#
+# -------------------------------------[INFO]---------------------------------------
+#
+# pandorasbox_regex.txt
+# Amazon package, Postal, UPS, Fedex, USPS-themed SMS-based spearphishing C2 domains.
+# See OTX for reference tagged "Pandoras Box"
+#   or https://otx.alienvault.com/browse/global/pulses?q=tag:%22Pandoras%20Box%22
+#
+# Note: this list may not have all activity seen in OTX due to merge issues.
+#   This set has been condensed into regexes (for known DGA). Original FQDN is
+#   still listed below for archival purposes.
+#
+# This cluster of activity is currently attributed to the SMShing Triad.
+#
+# The DGA pattern was observed to be related and similar in nature to Easy Rider.
+#
+# Created: 20241225
+# Updated: 20260815
+#
+# ------------------------------------[DOMAINS]-------------------------------------
+
+# 20250826
+0.0.0.0 (^|\.)best[a-z]{2}.ink$
+
+# 20250114
+0.0.0.0 (^|\.)usps.com-[a-z]{1,12}.top$
+0.0.0.0 (^|\.)amazon.com-*.top$
+0.0.0.0 (^|\.)anpost.com-winches[a-z]{1,2}.top$
+0.0.0.0 (^|\.)com-[a-z]{1,10}.top$
+
+# 20241230 - Regex
+0.0.0.0 (^|\.)informed.delivery[a-z]{4}.top$
+0.0.0.0 (^|\.)usps.com-track[a-z]{3}.top$
+
+# 20241116
+0.0.0.0 (^|\.)u.infotrack[a-z]{3}.top$
+0.0.0.0 (^|\.)infotrack[a-z]{3}.top$
+
+# 20240721
+0.0.0.0 (^|\.)us-usps-[a-z]{6}.xyz$

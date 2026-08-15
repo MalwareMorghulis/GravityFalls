@@ -1,0 +1,37 @@
+# -------------------------------------[INFO]---------------------------------------
+#
+# These notes are not necessarily complete knowledge dumps.
+# They provide context during some moments of pivoting as to why these clusters were linked together.
+#
+# ----------------------------------------------------------------------------------
+
+# 20241225
+Pandorasbox; Sender: "pnokwgifk" at "rambler[.]ru" Notes: Use of Aliyun INFRAX and Dominet (HK) Limited for registar Certificate issued by CloudFlare. Commonly utilizing *.top TLDs and "/us" URI suggesting regional targeting.
+Text message requests the user reply with "Y" to enable hyperlinks sent.
+
+# 20250114
+Looking back at my old OTX pulses, we find that there is a DGA pattern overlap between Easy Rider and Pandoras Box via the *[.]com-custo*[.]top and *[.]com-WORD[.]top. Based on pDNS, 47.76.140.150 was linked to numerous suspicious DGA domains with identical patterns that match both Pandoras Box and Easy Rider as well.
+The subdomains or domains are often some variation of "ezpass" or ezpass-themed (ezpassma, ezpassva... etc.)
+
+# 20250325
+Use of "ezpass" as a subdomain
+
+# 20250331
+Sender uses an AppleID account.
+
+# 20250609
+Now, the actor utilizes a state two-letter abbreviation with a randomized domain name and *.vip TLD. The URI is now "/pay". The IP is 49.51.49.30. It continues to use varying combinations of "DMV" and tolls.
+
+# 20250619
+Two reported domains utilized a "/portal" URI.
+
+# 20250624
+Reuse of the Anchor Nursery AppleID. 
+Alias "Ashley James" uses a fake Canadian address for registration of suspicious domains. Sender is an AppleID account for "The Anchor Nursery" but the username was "ss220765". Highly unusual for a normal user, even supposed business owner.
+
+# 20250826
+The senders start using clever domain tricks such as: "REALDOMAIN@HOSTILEDOMAIN/us". Some text message providers nullify hyperlinks, but if a user were to enable the hyperlink and click it, the user gets redirected to the hostile site and the real domain is treated as a username.
+In this case, the attacker spoofed Fedex and tried to redirect to "best*[.]ink". The registrant is associated with an alias: "Johnson William" and fake locations. The actor likely chose to host domains in Cloudflare infrastructure for robustness and to avoid easy blocks. They are associated with a collection of DGA domains following a distinct pattern.
+
+# 20260323
+Easy Rider has evolved with different variations of senders: domestic phones, international phones, iCloud, random emails. Fake registrant users with nonsensical names or fake addresses. Ultimately, infrastructure is consistently associated with CloudFlare, Dominet (HK), or Aliyun.
