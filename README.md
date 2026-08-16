@@ -2,7 +2,18 @@
 ## Summary
 DOI: 10.5281/zenodo.17624554
 
-Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s and a favored meme: "It's worthless!" and to differentiate from Pi-Hole's Gravity update process. DNS Sinkhole list of FQDNs from LevelBlue (AlienVault) OTX pivots by "MalwareMorghulis". Data was curated from automated and manual pivots to uncover suspicious or potentially hostile infrastructure. These monikers for campaign tracking are my own naming convention - unrelated to CrowdStrike, Mandiant, Palo Alto, etc. They are named for fun based on the TTP observed. Eventually, the lists will be reduced to regexes for maintenance purposes, ease of change-control, and due to UI limitations of LevelBlue OTX. Based on available open-source reporting, these DGA campaign activity clusters are likely associated with "Smishing Triad" (a cybercriminal group believed to be located in China).
+Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s and a favored meme: "It's worthless!" and to differentiate from Pi-Hole's Gravity update process. DNS Sinkhole list of FQDNs from LevelBlue (AlienVault) OTX pivots by "MalwareMorghulis".
+
+Data was curated from automated and manual pivots to uncover suspicious or potentially hostile infrastructure. These monikers for campaign tracking are my own naming convention - unrelated to CrowdStrike, Mandiant, Palo Alto, etc. They are named for fun based on the TTP observed. Eventually, the lists will be reduced to regexes for maintenance purposes, ease of change-control, and due to UI limitations of LevelBlue OTX. Based on available open-source reporting, these DGA campaign activity clusters are likely associated with "Smishing Triad" (a cybercriminal group believed to be located in China).
+
+As of August 2026, the data has been normalized (thank you to DomainTools)!
+- **SMishing_Triad**
+-- **domaintools_raw_export**: Contains data dumps during investigative process for hunting infrastructure, now recaptured thanks to DomainTools.
+-- **ioc**: Contains observed IOCs, no regexes, no predicted domains.
+-- **predicted_patterns**: Contains original regexes used for sinkholing.
+
+- **Unattributed**: IOCs not yet linked to any group
+
 
 **NOTE**: 2026_Research_Analysis\appendix.txt contains the command-line steps needed to replicate this experiment, due to documentation issues in originating tool source pages and tool results of the experiment.
 
