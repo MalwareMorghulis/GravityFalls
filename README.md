@@ -7,13 +7,14 @@ Gravity Falls is the repo named after an old cartoon comedy from the mid-2010s a
 Data was curated from automated and manual pivots to uncover suspicious or potentially hostile infrastructure. These monikers for campaign tracking are my own naming convention - unrelated to CrowdStrike, Mandiant, Palo Alto, etc. They are named for fun based on the TTP observed. Eventually, the lists will be reduced to regexes for maintenance purposes, ease of change-control, and due to UI limitations of LevelBlue OTX. Based on available open-source reporting, these DGA campaign activity clusters are likely associated with "Smishing Triad" (a cybercriminal group believed to be located in China).
 
 As of August 2026, the data has been normalized (thank you to DomainTools)!
+- **2026_Research_Analysis**
+  - v1: Original semester experiment at DSU.
+  - v2: Revision of experiment per recommendation of IEEE-CARS 2026 peer-review.
 - **SMishing_Triad**
--- **domaintools_raw_export**: Contains data dumps during investigative process for hunting infrastructure, now recaptured thanks to DomainTools.
--- **ioc**: Contains observed IOCs, no regexes, no predicted domains.
--- **predicted_patterns**: Contains original regexes used for sinkholing.
-
-- **Unattributed**: IOCs not yet linked to any group
-
+  - **domaintools_raw_export**: Contains data dumps during investigative process for hunting infrastructure, now recaptured thanks to DomainTools.
+  - **ioc**: Contains observed IOCs, no regexes, no predicted domains.
+  - **predicted_patterns**: Contains original regexes used for sinkholing, per activity cluster.
+- **Unattributed**: IOCs not yet linked to any group.
 
 **NOTE**: 2026_Research_Analysis\appendix.txt contains the command-line steps needed to replicate this experiment, due to documentation issues in originating tool source pages and tool results of the experiment.
 
@@ -24,7 +25,7 @@ As of August 2026, the data has been normalized (thank you to DomainTools)!
 - **Easy Rider**: Toll-themed or EZ-Pass themed SMS spearphishing utlizing random character concatenation or combo-lists.
 - **Pandoras Box**: USPS-themed SMS Spearphishing Domains (typically package tracking or typo-squatting service offerings like Informed Delivery). This is not strictly package delivery. The cluster uses complex combo-lists with typosquats.
 
-### Scam Tracker - Inconclusive
+### Scam Tracker - Inconclusive (Unattributed)
 - **Empty Promise**: Fake recruiter spam, from emails, asking the user to contact them over third-party messengers: Telegram, WhatsApp, etc.
 - **Purple Rain**: Indigo marketing and fake account notifications, including aliases Henry Fields or Daryl Huff.
 
