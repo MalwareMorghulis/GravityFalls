@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shannon Entropy Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        body.light-mode .container {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        body.light-mode .dark-mode-toggle:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        h1 {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode h1 {
+            color: #333;
+        }
+
+        p {
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode p {
+            color: #333;
+        }
+
+        .file-input {
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px dashed #555;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        body.light-mode .file-input {
+            border-color: #ddd;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #b0b0b0;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode label {
+            color: #555;
+        }
+
+        input[type="file"] {
+            margin-top: 5px;
+            color: #e0e0e0;
+            background: #353535;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.light-mode input[type="file"] {
+            color: #333;
+            background: white;
+            border-color: #ccc;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        body.light-mode button:disabled {
+            background: #ccc;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #1e3a5f;
+            color: #6bb6ff;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .status {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .error {
+            background: #3d1f1f;
+            color: #ff6b6b;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .success {
+            background: #1f3a2d;
+            color: #6ee7b7;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .info {
+            color: #888;
+            margin-top: 10px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .info {
+            color: #666;
+        }
+
+        .info p {
+            margin: 8px 0;
+        }
+
+        .info ul {
+            margin-left: 20px;
+        }
+
+        .info li {
+            margin: 5px 0;
+        }
+
+        .verdict-control {
+            margin-top: 15px;
+            padding: 15px;
+            background: #353535;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        body.light-mode .verdict-control {
+            background: #f8f9fa;
+        }
+
+        .verdict-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .verdict-label-text {
+            font-weight: bold;
+            color: #b0b0b0;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .verdict-label-text {
+            color: #555;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        body.light-mode .toggle-slider {
+            background-color: #ccc;
+        }
+
+        body.light-mode input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        .verdict-options {
+            display: none;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .verdict-options.show {
+            display: flex;
+        }
+
+        .verdict-btn {
+            flex: 1;
+            background: #555;
+            color: #e0e0e0;
+            padding: 10px 16px;
+            border: 2px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .verdict-btn {
+            background: #e0e0e0;
+            color: #333;
+            border-color: #ccc;
+        }
+
+        .verdict-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .verdict-btn.selected {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .verdict-option-label {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .verdict-option-label {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
+        <h1>Shannon Entropy Calculator</h1>
+        <p>Upload your CSV files to calculate Shannon Entropy for all domains.</p>
+        
+        <div class="file-input">
+            <label for="probFile">1. Probability.csv (with header):</label>
+            <input type="file" id="probFile" accept=".csv">
+        </div>
+        
+        <div class="file-input">
+            <label for="domainsFile">2. Domains.csv (without header):</label>
+            <input type="file" id="domainsFile" accept=".csv">
+            
+            <div class="verdict-control">
+                <div class="verdict-label">
+                    <span class="verdict-label-text">Verdict Mode:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="verdictToggle" onchange="toggleVerdictMode()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="verdict-label-text" id="verdictModeLabel">Manual</span>
+                </div>
+                
+                <div class="verdict-options" id="verdictOptions">
+                    <button class="verdict-btn" onclick="selectVerdictMode('benign')">Benign</button>
+                    <button class="verdict-btn" onclick="selectVerdictMode('evil')">Evil</button>
+                </div>
+                <div class="verdict-option-label" id="verdictOptionLabel">Pre-fills verdict cell with individual domain name for manual change later.</div>
+            </div>
+        </div>
+        
+        <button id="processBtn" onclick="processFiles()">Calculate & Download Results</button>
+        
+        <div id="status" style="display:none;"></div>
+        
+        <div class="info">
+            <p><strong>Note:</strong> Only the domain name before the TLD is examined (subdomains are ignored).</p>
+            <p>Examples:</p>
+            <ul>
+                <li>"www.example.com" → analyzes only "example"</li>
+                <li>"sub.example.co.uk" → analyzes only "example"</li>
+                <li>"example.com.br" → analyzes only "example"</li>
+                <li>"shop.example.gov.au" → analyzes only "example"</li>
+            </ul>
+            <p><em>Automatically handles country code TLDs (co.*, com.*, net.*, org.*, edu.*, gov.*, ac.*, etc.)</em></p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dark mode on page load (default to dark mode)
+        function initDarkMode() {
+            // Check if user has previously set a preference
+            const savedMode = localStorage.getItem('darkMode');
+            
+            // Default to dark mode ('true') if no preference is saved
+            const shouldBeDarkMode = savedMode !== 'false';
+            
+            if (shouldBeDarkMode) {
+                // Apply dark mode (remove light-mode class)
+                document.body.classList.remove('light-mode');
+                updateToggleButton(false);
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                // Apply light mode
+                document.body.classList.add('light-mode');
+                updateToggleButton(true);
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const isDarkMode = !document.body.classList.contains('light-mode');
+            if (isDarkMode) {
+                // Switch to light mode
+                document.body.classList.add('light-mode');
+                localStorage.setItem('darkMode', 'false');
+                updateToggleButton(true);
+            } else {
+                // Switch to dark mode
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('darkMode', 'true');
+                updateToggleButton(false);
+            }
+        }
+
+        // Update toggle button emoji
+        function updateToggleButton(isLightMode) {
+            const btn = document.querySelector('.dark-mode-toggle');
+            if (btn) {
+                btn.textContent = isLightMode ? '☀️' : '🌙';
+            }
+        }
+
+        // Initialize dark mode immediately to prevent flash of light mode
+        initDarkMode();
+        
+        // Also initialize on DOMContentLoaded as backup
+        window.addEventListener('DOMContentLoaded', initDarkMode);
+
+        let probData = null;
+        let domainsData = null;
+        let verdictMode = 'manual'; // 'manual' or 'auto'
+        let autoVerdictValue = null; // 'benign' or 'evil'
+
+        function toggleVerdictMode() {
+            const toggle = document.getElementById('verdictToggle');
+            const options = document.getElementById('verdictOptions');
+            const label = document.getElementById('verdictModeLabel');
+            const optionLabel = document.getElementById('verdictOptionLabel');
+            
+            if (toggle.checked) {
+                // Auto mode
+                verdictMode = 'auto';
+                label.textContent = 'Auto';
+                options.classList.add('show');
+                optionLabel.textContent = 'Select verdict for all rows';
+            } else {
+                // Manual mode
+                verdictMode = 'manual';
+                label.textContent = 'Manual';
+                options.classList.remove('show');
+                optionLabel.textContent = 'Pre-fills verdict cell with individual domain name for manual change later.';
+                autoVerdictValue = null;
+                // Remove selection
+                document.querySelectorAll('.verdict-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+            }
+        }
+
+        function selectVerdictMode(mode) {
+            autoVerdictValue = mode;
+            
+            // Update button states
+            document.querySelectorAll('.verdict-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            event.target.classList.add('selected');
+            
+            const optionLabel = document.getElementById('verdictOptionLabel');
+            optionLabel.textContent = `All rows will be marked as: ${mode.toUpperCase()}`;
+        }
+
+        document.getElementById('probFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    probData = event.target.result;
+                    showStatus('✓ Probability file loaded', 'success');
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        document.getElementById('domainsFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    domainsData = event.target.result;
+                    showStatus('✓ Domains file loaded', 'success');
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function showStatus(message, type = 'status') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status ' + type;
+            statusDiv.textContent = message;
+        }
+
+        function processFiles() {
+            if (!probData || !domainsData) {
+                showStatus('Please upload both CSV files first!', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('processBtn');
+            btn.disabled = true;
+            
+            try {
+                showStatus('Parsing probability data...');
+                
+                // Parse probability data
+                const probabilities = Papa.parse(probData, {
+                    header: true,
+                    dynamicTyping: true,
+                    skipEmptyLines: true
+                });
+                
+                // Create character probability map
+                const charProbMap = new Map();
+                probabilities.data.forEach(row => {
+                    // Ensure Character is stored as a string, not a number
+                    const char = String(row.Character || '');
+                    const prob = row.Probability;
+                    if (char && prob !== null && prob !== undefined) {
+                        charProbMap.set(char, prob);
+                    }
+                });
+                
+                const charList = Array.from(charProbMap.keys()).sort().join(', ');
+                showStatus(`Loaded ${charProbMap.size} characters: ${charList}. Parsing domains...`);
+                
+                // Parse domains data (keep as strings, don't convert to numbers)
+                const domains = Papa.parse(domainsData, {
+                    header: false,
+                    skipEmptyLines: true
+                });
+                
+                showStatus(`Processing ${domains.data.length} domains...`);
+                
+                // Helper functions
+                function extractDomainPortion(fullDomain) {
+                    // Extract only the second-level domain (before TLD, ignoring subdomains)
+                    // Also handles country code TLDs like .co.uk, .com.au, etc.
+                    const domainStr = String(fullDomain).toLowerCase();
+                    const parts = domainStr.split('.');
+                    
+                    if (parts.length >= 3) {
+                        // Check if last two parts form a two-part TLD
+                        const lastPart = parts[parts.length - 1];
+                        const secondLastPart = parts[parts.length - 2];
+                        
+                        // Common second-level domain patterns that indicate a two-part TLD
+                        const commonSLDs = new Set([
+                            'co', 'com', 'net', 'org', 'edu', 'gov', 'ac', 'mil',
+                            'sch', 'govt', 'asn', 'id', 'web', 'nom', 'int',
+                            'nic', 'gob', 'go', 'ne', 'or', 'geek', 'gen', 'info'
+                        ]);
+                        
+                        // If second-to-last part is a common SLD, treat as two-part TLD
+                        if (commonSLDs.has(secondLastPart)) {
+                            // e.g., "www.example.co.uk" -> "example"
+                            // e.g., "example.com.br" -> "example"
+                            return parts[parts.length - 3];
+                        }
+                    }
+                    
+                    // Standard TLD handling
+                    // e.g., "www.example.com" -> "example"
+                    // e.g., "example.com" -> "example"
+                    if (parts.length >= 2) {
+                        return parts[parts.length - 2];
+                    }
+                    
+                    return parts[0] || '';
+                }
+                
+                function calculateShannonEntropy(domainPortion, charProbMap) {
+                    // Ensure it's a string
+                    const portion = String(domainPortion);
+                    if (!portion || portion.length === 0) {
+                        return 0;
+                    }
+                    
+                    let entropy = 0;
+                    let missingChars = new Set();
+                    
+                    for (const char of portion) {
+                        const prob = charProbMap.get(char);
+                        if (prob && prob > 0) {
+                            entropy -= prob * Math.log2(prob);
+                        } else {
+                            // Track characters not found in probability map
+                            missingChars.add(char);
+                        }
+                    }
+                    
+                    // Log warning for first domain with missing characters
+                    if (missingChars.size > 0 && !window.warnedMissing) {
+                        console.warn(`Characters not found in probability map: ${Array.from(missingChars).join(', ')}`);
+                        console.warn(`Available characters: ${Array.from(charProbMap.keys()).join(', ')}`);
+                        window.warnedMissing = true;
+                    }
+                    
+                    return entropy;
+                }
+                
+                // Process all domains
+                let csvContent = 'Domain,Domain_Portion,Shannon_Entropy,Verdict\n';
+                
+                // Check if auto mode is selected but no verdict has been chosen
+                if (verdictMode === 'auto' && !autoVerdictValue) {
+                    showStatus('Please select a verdict (Benign or Evil) for auto mode!', 'error');
+                    btn.disabled = false;
+                    return;
+                }
+                
+                for (let i = 0; i < domains.data.length; i++) {
+                    const row = domains.data[i];
+                    // Ensure domain is treated as string
+                    const fullDomain = String(row[0] || '');
+                    
+                    // Determine verdict based on mode
+                    let verdict;
+                    if (verdictMode === 'auto') {
+                        // Use the selected auto verdict value
+                        verdict = autoVerdictValue;
+                    } else {
+                        // Manual mode: pre-fill with the domain name for manual review
+                        verdict = fullDomain;
+                    }
+                    
+                    const domainPortion = extractDomainPortion(fullDomain);
+                    const entropy = calculateShannonEntropy(domainPortion, charProbMap);
+                    
+                    csvContent += `${fullDomain},${domainPortion},${entropy.toFixed(6)},${verdict}\n`;
+                    
+                    // Update status every 1000 rows
+                    if (i > 0 && i % 1000 === 0) {
+                        showStatus(`Processing... ${i}/${domains.data.length} domains`);
+                    }
+                }
+                
+                showStatus('Creating download...');
+                
+                // Get the filename from the domains file input and create output filename
+                const domainsFileInput = document.getElementById('domainsFile');
+                let outputFilename = 'shannon_entropy_results.csv';
+                
+                if (domainsFileInput.files.length > 0) {
+                    const inputFilename = domainsFileInput.files[0].name;
+                    outputFilename = 'shannon_' + inputFilename;
+                }
+                
+                // Create and download file
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', outputFilename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showStatus(`✓ Success! Downloaded results for ${domains.data.length} domains`, 'success');
+                btn.disabled = false;
+                
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                console.error(error);
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

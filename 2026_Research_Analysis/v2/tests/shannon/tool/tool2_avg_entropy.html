@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shannon Entropy Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+        
+        .upload-area:hover {
+            background: #eef1ff;
+            border-color: #764ba2;
+            transform: translateY(-2px);
+        }
+        
+        .upload-area.dragover {
+            background: #e0e7ff;
+            border-color: #4338ca;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .upload-hint {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .stats-container {
+            display: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            color: white;
+        }
+        
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            display: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+            display: block;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            display: block;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+            display: block;
+        }
+        
+        .preview {
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .preview-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .table-container {
+            max-height: 300px;
+            overflow: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            background: #f3f4f6;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid #d1d5db;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .suspicious-row {
+            background: #fef3c7;
+        }
+        
+        .suspicious-row:hover {
+            background: #fde68a;
+        }
+        
+        .flag-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .flag-suspicious {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .flag-normal {
+            background: #d1fae5;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shannon Entropy CSV Analyzer</h1>
+        <p class="subtitle">Upload your CSV to automatically flag domains based on Shannon entropy analysis</p>
+        
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📊</div>
+            <div class="upload-text">Click to upload or drag & drop</div>
+            <div class="upload-hint">CSV file with Domain, Domain_Portion, Shannon_Entropy, and Verdict columns</div>
+            <input type="file" id="fileInput" accept=".csv">
+        </div>
+
+        <div class="stats-container" id="statsContainer">
+            <div class="stats-title">Analysis Results</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Total Domains</div>
+                    <div class="stat-value" id="totalCount">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Mean Entropy</div>
+                    <div class="stat-value" id="meanValue">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Std Deviation</div>
+                    <div class="stat-value" id="stdValue">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Suspicious</div>
+                    <div class="stat-value" id="suspiciousCount">-</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="download-btn" id="downloadBtn" onclick="downloadCSV()">
+            📥 Download Flagged CSV
+        </button>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="preview" id="preview">
+            <div class="preview-title">Data Preview (showing first 20 rows)</div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Domain Portion</th>
+                            <th>Shannon Entropy</th>
+                            <th>Verdict</th>
+                            <th>Flag</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let processedCSV = null;
+        let processedData = null;
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const statusDiv = document.getElementById('status');
+        const statsContainer = document.getElementById('statsContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const preview = document.getElementById('preview');
+
+        fileInput.addEventListener('change', handleFile);
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.csv')) {
+                processFile(file);
+            } else {
+                showStatus('Please upload a CSV file', 'error');
+            }
+        });
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        function processFile(file) {
+            showStatus('Processing file...', 'info');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                processCSV(content);
+            };
+            reader.onerror = function() {
+                showStatus('Error reading file', 'error');
+            };
+            reader.readAsText(file);
+        }
+
+        function calculateMean(values) {
+            const sum = values.reduce((acc, val) => acc + val, 0);
+            return sum / values.length;
+        }
+
+        function calculateStdDev(values, mean) {
+            const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
+            const avgSquaredDiff = squaredDiffs.reduce((acc, val) => acc + val, 0) / values.length;
+            return Math.sqrt(avgSquaredDiff);
+        }
+
+        function processCSV(content) {
+            try {
+                const parsed = Papa.parse(content, {
+                    header: true,
+                    dynamicTyping: true,
+                    skipEmptyLines: true,
+                    delimitersToGuess: [',', '\t', '|', ';']
+                });
+
+                if (!parsed.data || parsed.data.length === 0) {
+                    showStatus('No data found in CSV', 'error');
+                    return;
+                }
+
+                const data = parsed.data;
+                const headers = Object.keys(data[0]);
+                
+                if (headers.length < 4) {
+                    showStatus('CSV must have at least 4 columns', 'error');
+                    return;
+                }
+
+                const entropyColumn = headers[2];
+                const entropyValues = data
+                    .map(row => row[entropyColumn])
+                    .filter(val => typeof val === 'number' && !isNaN(val));
+
+                if (entropyValues.length === 0) {
+                    showStatus('No valid Shannon Entropy values found in column 3', 'error');
+                    return;
+                }
+
+                const mean = calculateMean(entropyValues);
+                const stdDev = calculateStdDev(entropyValues, mean);
+                const lowerBound = mean - (2 * stdDev);
+                const upperBound = mean + (2 * stdDev);
+
+                processedData = data.map(row => {
+                    const entropy = row[entropyColumn];
+                    let flag = 'normal';
+                    
+                    if (typeof entropy === 'number' && !isNaN(entropy)) {
+                        if (entropy < lowerBound || entropy > upperBound) {
+                            flag = 'suspicious';
+                        }
+                    }
+                    
+                    return {
+                        [headers[0]]: row[headers[0]],
+                        [headers[1]]: row[headers[1]],
+                        [headers[2]]: row[headers[2]],
+                        [headers[3]]: row[headers[3]],
+                        'Flag': flag
+                    };
+                });
+
+                processedCSV = Papa.unparse(processedData);
+
+                const suspiciousCount = processedData.filter(row => row.Flag === 'suspicious').length;
+                const normalCount = processedData.filter(row => row.Flag === 'normal').length;
+
+                document.getElementById('totalCount').textContent = processedData.length.toLocaleString();
+                document.getElementById('meanValue').textContent = mean.toFixed(7);
+                document.getElementById('stdValue').textContent = stdDev.toFixed(7);
+                document.getElementById('suspiciousCount').textContent = suspiciousCount.toLocaleString() + 
+                    ' (' + ((suspiciousCount/processedData.length)*100).toFixed(1) + '%)';
+
+                statsContainer.style.display = 'block';
+                downloadBtn.style.display = 'block';
+                
+                showPreview(processedData, headers);
+                showStatus(`✓ File processed successfully! Found ${suspiciousCount} suspicious domains (outside ±2σ)`, 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Error processing CSV: ' + error.message, 'error');
+            }
+        }
+
+        function showPreview(data, headers) {
+            const tbody = document.getElementById('previewBody');
+            tbody.innerHTML = '';
+
+            const previewData = data.slice(0, 20);
+
+            previewData.forEach(row => {
+                const tr = document.createElement('tr');
+                if (row.Flag === 'suspicious') {
+                    tr.className = 'suspicious-row';
+                }
+                
+                const flagClass = row.Flag === 'suspicious' ? 'flag-suspicious' : 'flag-normal';
+                
+                tr.innerHTML = `
+                    <td>${row[headers[0]] || ''}</td>
+                    <td>${row[headers[1]] || ''}</td>
+                    <td>${typeof row[headers[2]] === 'number' ? row[headers[2]].toFixed(7) : row[headers[2]]}</td>
+                    <td>${row[headers[3]] || ''}</td>
+                    <td><span class="flag-badge ${flagClass}">${row.Flag}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            preview.style.display = 'block';
+        }
+
+        function downloadCSV() {
+            if (!processedCSV) {
+                showStatus('No processed data available', 'error');
+                return;
+            }
+
+            try {
+                const blob = new Blob([processedCSV], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                const timestamp = new Date().toISOString().slice(0,10);
+                a.download = `shannon_entropy_flagged_${timestamp}.csv`;
+                
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showStatus('✓ Download complete! Check your downloads folder.', 'success');
+            } catch (error) {
+                showStatus('Error downloading file: ' + error.message, 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+            statusDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

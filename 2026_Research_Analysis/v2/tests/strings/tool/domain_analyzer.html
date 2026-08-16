@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain CSV Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .container {
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .header h1 {
+            color: #2c3e50;
+        }
+
+        body:not(.light-mode) .header h1 {
+            color: #e0e0e0;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .header p {
+            color: #7f8c8d;
+        }
+
+        body:not(.light-mode) .header p {
+            color: #b0b0b0;
+        }
+
+        .dark-mode-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        body.light-mode .dark-mode-toggle:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .upload-section {
+            background: #353535;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        body.light-mode .upload-section {
+            background: #f8f9fa;
+            border-color: #3498db;
+        }
+
+        .upload-section.drag-over {
+            background: #404040;
+            border-color: #2980b9;
+        }
+
+        body.light-mode .upload-section.drag-over {
+            background: #e8f4f8;
+            border-color: #2980b9;
+        }
+
+        .file-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+            background: #3a3a3a;
+            color: #e0e0e0;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode input[type="file"] {
+            border-color: #bdc3c7;
+            background: white;
+            color: #333;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background: #2980b9;
+        }
+
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .drag-hint {
+            color: #b0b0b0;
+            font-size: 13px;
+            margin-top: 10px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .drag-hint {
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #3d1f1f;
+            border: 1px solid #7a3a3a;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .error {
+            background: #fadbd8;
+            border-color: #f5b7b1;
+            color: #c0392b;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            background: #1f3a2d;
+            border: 1px solid #4a7c59;
+            color: #6ee7b7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .success {
+            background: #d5f4e6;
+            border-color: #a9dfbf;
+            color: #27ae60;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        #results {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card.alt1 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card.alt2 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #444;
+            padding-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        body.light-mode .tab-buttons {
+            border-bottom-color: #ecf0f1;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: #888;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            margin-bottom: -15px;
+            padding-bottom: 25px;
+        }
+
+        body.light-mode .tab-btn {
+            color: #7f8c8d;
+        }
+
+        .tab-btn:hover {
+            color: #3498db;
+        }
+
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+            background: transparent;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        body.light-mode .table-wrapper {
+            border-color: #ecf0f1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #353535;
+            color: #e0e0e0;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid #444;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        body.light-mode th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border-bottom-color: #ecf0f1;
+        }
+
+        th:hover {
+            background: #404040;
+        }
+
+        body.light-mode th:hover {
+            background: #ecf0f1;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #444;
+            color: #e0e0e0;
+            transition: background 0.2s ease;
+        }
+
+        body.light-mode td {
+            border-bottom-color: #ecf0f1;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #404040;
+        }
+
+        body.light-mode tr:hover {
+            background: #f8f9fa;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #555;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        body.light-mode .spinner {
+            border-color: #ecf0f1;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #b0b0b0;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .loading-text {
+            color: #7f8c8d;
+        }
+
+        .export-btn {
+            background: #27ae60;
+            flex: 1;
+            min-width: 150px;
+            transition: background 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #229954;
+        }
+
+        .chart-container {
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .chart-title {
+            color: #2c3e50;
+        }
+
+        .bar-chart {
+            background: #353535;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.light-mode .bar-chart {
+            background: #f8f9fa;
+            border-color: #ecf0f1;
+        }
+
+        .bar-label {
+            min-width: 80px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e0e0e0;
+            text-align: right;
+            transition: color 0.3s ease;
+        }
+
+        body.light-mode .bar-label {
+            color: #2c3e50;
+        }
+
+        .bar-fill {
+            flex: 1;
+            height: 24px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            min-width: 40px;
+        }
+
+        .bar-value {
+            min-width: 80px;
+            text-align: right;
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+
+        .chart-toggle-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            background: #404040;
+            color: #e0e0e0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-mode .toggle-btn {
+            background: #34495e;
+            color: white;
+        }
+
+        .toggle-btn:hover {
+            background: #505050;
+        }
+
+        body.light-mode .toggle-btn:hover {
+            background: #2c3e50;
+        }
+
+        .toggle-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .chart-container {
+            background: #353535;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.light-mode .chart-container {
+            background: #f8f9fa;
+            border-color: #ecf0f1;
+        }
+
+        .chart-container.show {
+            display: block;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .file-input-wrapper {
+                flex-direction: column;
+            }
+
+            input[type="file"] {
+                max-width: 100%;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .tab-btn {
+                border-bottom: none;
+                border-left: 3px solid transparent;
+                padding-bottom: 10px;
+                padding-left: 15px;
+                margin-bottom: 0;
+            }
+
+            .tab-btn.active {
+                border-left-color: #3498db;
+                border-bottom-color: transparent;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
+            <h1>🔍 Domain CSV Analyzer</h1>
+            <p>Analyze domain patterns: TLDs, lengths, and n-gram frequencies</p>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="file-input-wrapper">
+                <input type="file" id="csvFile" accept=".csv" />
+                <button onclick="handleFileUpload()">📊 Analyze</button>
+            </div>
+            <div class="drag-hint">
+                💡 Or drag and drop a CSV file here (no header row required)
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing domains...</div>
+        </div>
+
+        <div id="results">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Domains</div>
+                    <div class="stat-value" id="totalDomains">0</div>
+                </div>
+                <div class="stat-card alt1">
+                    <div class="stat-label">Unique TLDs</div>
+                    <div class="stat-value" id="uniqueTLDs">0</div>
+                </div>
+                <div class="stat-card alt2">
+                    <div class="stat-label">Unique Lengths</div>
+                    <div class="stat-value" id="uniqueLengths">0</div>
+                </div>
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('tld', event)">TLD Analysis</button>
+                <button class="tab-btn" onclick="switchTab('subdomain', event)">Subdomain Analysis</button>
+                <button class="tab-btn" onclick="switchTab('length', event)">Domain Length</button>
+                <button class="tab-btn" onclick="switchTab('unigram', event)">1-gram Analysis</button>
+                <button class="tab-btn" onclick="switchTab('bigram', event)">2-gram Analysis</button>
+                <button class="tab-btn" onclick="switchTab('trigram', event)">3-gram Analysis</button>
+            </div>
+
+            <!-- TLD Analysis Tab -->
+            <div id="tld" class="tab-content active">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('tld', 0)">TLD</th>
+                                <th onclick="sortTable('tld', 1)">Type</th>
+                                <th onclick="sortTable('tld', 2)">Count</th>
+                                <th onclick="sortTable('tld', 3)">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tldTable"></tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('tld', 'tld_analysis.csv')">📥 Export TLD Analysis</button>
+                </div>
+            </div>
+
+            <!-- Subdomain Analysis Tab -->
+            <div id="subdomain" class="tab-content">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('subdomain', 0)">Subdomain</th>
+                                <th onclick="sortTable('subdomain', 1)">Count</th>
+                                <th onclick="sortTable('subdomain', 2)">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subdomainTable"></tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('subdomain', 'subdomain_analysis.csv')">📥 Export Subdomain Analysis</button>
+                </div>
+            </div>
+
+            <!-- Domain Length Tab -->
+            <div id="length" class="tab-content">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('length', 0)">Domain Length</th>
+                                <th onclick="sortTable('length', 1)">Count</th>
+                                <th onclick="sortTable('length', 2)">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lengthTable"></tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('length', 'domain_length_analysis.csv')">📥 Export Length Analysis</button>
+                </div>
+            </div>
+
+            <!-- 1-gram Analysis Tab -->
+            <div id="unigram" class="tab-content">
+                <div class="chart-toggle-section">
+                    <button class="toggle-btn" onclick="toggleChart('unigram', 'bar')">📊 Bar Chart</button>
+                    <button class="toggle-btn" onclick="toggleChart('unigram', 'pie')">🥧 Pie Chart</button>
+                </div>
+
+                <div class="chart-container" id="unigramBarChart">
+                    <div class="chart-wrapper">
+                        <canvas id="unigramBarCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="unigramPieChart">
+                    <div class="chart-wrapper">
+                        <canvas id="unigramPieCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('unigram', 0)">1-gram</th>
+                                <th onclick="sortTable('unigram', 1)">Count</th>
+                                <th onclick="sortTable('unigram', 2)">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unigramTable"></tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('unigram', '1gram_analysis.csv')">📥 Export 1-gram Analysis</button>
+                </div>
+            </div>
+
+            <!-- 2-gram Analysis Tab -->
+            <div id="bigram" class="tab-content">
+                <div class="chart-toggle-section">
+                    <button class="toggle-btn" onclick="toggleChart('bigram', 'bar')">📊 Bar Chart</button>
+                    <button class="toggle-btn" onclick="toggleChart('bigram', 'pie')">🥧 Pie Chart</button>
+                </div>
+
+                <div class="chart-container" id="bigramBarChart">
+                    <div class="chart-wrapper">
+                        <canvas id="bigramBarCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="bigramPieChart">
+                    <div class="chart-wrapper">
+                        <canvas id="bigramPieCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('bigram', 0)">2-gram</th>
+                                <th onclick="sortTable('bigram', 1)">Count</th>
+                                <th onclick="sortTable('bigram', 2)">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bigramTable"></tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('bigram', '2gram_analysis.csv')">📥 Export 2-gram Analysis</button>
+                </div>
+            </div>
+
+            <!-- 3-gram Analysis Tab -->
+            <div id="trigram" class="tab-content">
+                <div class="chart-toggle-section">
+                    <button class="toggle-btn" onclick="toggleChart('trigram', 'bar')">📊 Bar Chart</button>
+                    <button class="toggle-btn" onclick="toggleChart('trigram', 'pie')">🥧 Pie Chart</button>
+                </div>
+
+                <div class="chart-container" id="trigramBarChart">
+                    <div class="chart-wrapper">
+                        <canvas id="trigramBarCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="trigramPieChart">
+                    <div class="chart-wrapper">
+                        <canvas id="trigramPieCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('trigram', 0)">3-gram</th>
+                                <th onclick="sortTable('trigram', 1)">Count</th>
+                                <th onclick="sortTable('trigram', 2)">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trigramTable"></tbody>
+                    </table>
+                </div>
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('trigram', '3gram_analysis.csv')">📥 Export 3-gram Analysis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dark mode on page load (default to dark mode)
+        function initDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') !== 'false';
+            if (isDarkMode) {
+                document.body.classList.remove('light-mode');
+                updateToggleButton(false);
+            } else {
+                document.body.classList.add('light-mode');
+                updateToggleButton(true);
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const isDarkMode = !document.body.classList.contains('light-mode');
+            if (isDarkMode) {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('darkMode', 'false');
+                updateToggleButton(true);
+            } else {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('darkMode', 'true');
+                updateToggleButton(false);
+            }
+        }
+
+        // Update toggle button emoji
+        function updateToggleButton(isLightMode) {
+            const btn = document.querySelector('.dark-mode-toggle');
+            btn.textContent = isLightMode ? '☀️' : '🌙';
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initDarkMode);
+
+        // TLD classification
+        const TLD_TYPES = {
+            'com': 'gTLD', 'org': 'gTLD', 'net': 'gTLD', 'edu': 'gTLD', 'gov': 'gTLD', 'mil': 'gTLD', 'int': 'gTLD',
+            'info': 'gTLD', 'biz': 'gTLD', 'name': 'gTLD', 'pro': 'gTLD', 'mobi': 'gTLD', 'aero': 'gTLD', 'asia': 'gTLD',
+            'coop': 'gTLD', 'tel': 'gTLD', 'travel': 'gTLD', 'xxx': 'gTLD', 'post': 'gTLD', 'geo': 'gTLD',
+            'app': 'gTLD', 'dev': 'gTLD', 'io': 'gTLD', 'ai': 'gTLD', 'cloud': 'gTLD', 'online': 'gTLD',
+            'site': 'gTLD', 'tech': 'gTLD', 'top': 'gTLD', 'xyz': 'gTLD', 'buzz': 'gTLD', 'design': 'gTLD',
+            'digital': 'gTLD', 'agency': 'gTLD', 'shop': 'gTLD', 'store': 'gTLD', 'blog': 'gTLD', 'space': 'gTLD',
+            'uk': 'ccTLD', 'de': 'ccTLD', 'fr': 'ccTLD', 'jp': 'ccTLD', 'cn': 'ccTLD', 'in': 'ccTLD',
+            'br': 'ccTLD', 'mx': 'ccTLD', 'ca': 'ccTLD', 'au': 'ccTLD', 'us': 'ccTLD', 'ru': 'ccTLD',
+            'it': 'ccTLD', 'es': 'ccTLD', 'nl': 'ccTLD', 'ch': 'ccTLD', 'se': 'ccTLD', 'no': 'ccTLD',
+            'kr': 'ccTLD', 'za': 'ccTLD', 'sg': 'ccTLD', 'hk': 'ccTLD', 'tw': 'ccTLD', 'nz': 'ccTLD',
+        };
+
+        let analysisData = {
+            domains: [],
+            tlds: {},
+            subdomains: {},
+            lengths: {},
+            unigrams: {},
+            bigrams: {},
+            trigrams: {}
+        };
+
+        // Common multi-part country-code TLDs
+        const MULTI_PART_TLDS = new Set([
+            // UK variants
+            'co.uk', 'ac.uk', 'gov.uk', 'org.uk', 'me.uk',
+            // Japan variants
+            'co.jp', 'or.jp', 'go.jp', 'ne.jp', 'ac.jp',
+            // India variants
+            'co.in', 'ac.in',
+            // South Korea variants
+            'co.kr', 'ac.kr',
+            // New Zealand variants
+            'co.nz', 'ac.nz', 'org.nz', 'net.nz', 'edu.nz',
+            // South Africa variants
+            'co.za', 'ac.za', 'org.za', 'net.za',
+            // Australia variants
+            'com.au', 'edu.au', 'org.au', 'net.au', 'gov.au', 'ac.au',
+            // Brazil variants
+            'com.br', 'edu.br', 'org.br', 'gov.br', 'net.br',
+            // Mexico variants
+            'com.mx', 'org.mx', 'gov.mx',
+            // Argentina variants
+            'com.ar', 'gov.ar', 'org.ar',
+            // China variants
+            'com.cn', 'org.cn', 'gov.cn', 'edu.cn', 'net.cn',
+            // Singapore variants
+            'com.sg', 'gov.sg', 'edu.sg', 'org.sg',
+            // Hong Kong variants
+            'com.hk', 'org.hk', 'gov.hk', 'edu.hk', 'net.hk',
+            // Malaysia variants
+            'com.my', 'org.my', 'gov.my', 'edu.my', 'net.my',
+            // Thailand variants
+            'com.th', 'co.th', 'ac.th', 'gov.th', 'or.th', 'net.th', 'edu.th',
+            // Indonesia variants
+            'co.id', 'ac.id', 'go.id', 'org.id',
+            // Philippines variants
+            'com.ph', 'org.ph', 'gov.ph', 'edu.ph', 'net.ph',
+            // Taiwan variants
+            'com.tw', 'org.tw', 'gov.tw', 'edu.tw', 'net.tw',
+            // Vietnam variants
+            'com.vn', 'edu.vn', 'gov.vn', 'org.vn', 'net.vn',
+            // Ukraine variants
+            'com.ua', 'org.ua', 'gov.ua', 'edu.ua', 'net.ua',
+            // Turkey variants
+            'com.tr', 'org.tr', 'gov.tr', 'edu.tr', 'net.tr',
+            // Colombia variants
+            'com.co', 'org.co', 'edu.co', 'gov.co',
+            // Peru variants
+            'com.pe', 'org.pe', 'edu.pe', 'gov.pe',
+            // Chile variants
+            'com.cl', 'org.cl', 'gov.cl', 'edu.cl',
+            // Ecuador variants
+            'com.ec', 'org.ec', 'gov.ec', 'edu.ec',
+            // Venezuela variants
+            'co.ve', 'com.ve', 'org.ve', 'gov.ve', 'edu.ve',
+            // Israel variants
+            'co.il', 'org.il', 'gov.il', 'ac.il', 'edu.il',
+            // Kenya variants
+            'co.ke', 'or.ke', 'ac.ke',
+            // Nigeria variants
+            'co.ng', 'org.ng', 'gov.ng', 'edu.ng',
+            // Tanzania variants
+            'co.tz', 'or.tz', 'ac.tz',
+            // Uganda variants
+            'co.ug', 'ac.ug', 'or.ug',
+            // Virgin Islands variants
+            'co.vi', 'org.vi',
+            // Vanuatu variants
+            'co.vu', 'org.vu',
+            // Ghana variants
+            'com.gh', 'org.gh', 'gov.gh', 'edu.gh'
+        ]);
+
+        // Extract TLD from domain (handles multi-part TLDs)
+        function extractTLD(domain) {
+            const domainLower = domain.toLowerCase().trim();
+            const parts = domainLower.split('.');
+            
+            if (parts.length < 2) {
+                return domainLower;
+            }
+
+            // Check for multi-part TLDs
+            if (parts.length >= 3) {
+                const lastTwo = parts[parts.length - 2] + '.' + parts[parts.length - 1];
+                if (MULTI_PART_TLDS.has(lastTwo)) {
+                    return lastTwo;
+                }
+            }
+
+            // Otherwise return just the last part
+            return parts[parts.length - 1];
+        }
+
+        // Extract domain name (without TLD and subdomains)
+        function extractDomainName(domain) {
+            const domainLower = domain.toLowerCase().trim();
+            const parts = domainLower.split('.');
+            
+            if (parts.length < 2) {
+                return domainLower;
+            }
+
+            let tldParts = 1; // Single-part TLD by default
+
+            // Check if it's a multi-part TLD
+            if (parts.length >= 3) {
+                const lastTwo = parts[parts.length - 2] + '.' + parts[parts.length - 1];
+                if (MULTI_PART_TLDS.has(lastTwo)) {
+                    tldParts = 2;
+                }
+            }
+
+            // Get the domain name (the part right before the TLD)
+            const domainIndex = parts.length - tldParts - 1;
+            if (domainIndex >= 0) {
+                return parts[domainIndex];
+            }
+
+            return parts[0];
+        }
+
+        // Extract subdomain/hostname (everything before domain name and TLD)
+        function extractSubdomain(domain) {
+            const domainLower = domain.toLowerCase().trim();
+            const parts = domainLower.split('.');
+            
+            if (parts.length < 3) {
+                return null; // No subdomain if less than 3 parts
+            }
+
+            let tldParts = 1; // Single-part TLD by default
+
+            // Check if it's a multi-part TLD
+            if (parts.length >= 3) {
+                const lastTwo = parts[parts.length - 2] + '.' + parts[parts.length - 1];
+                if (MULTI_PART_TLDS.has(lastTwo)) {
+                    tldParts = 2;
+                }
+            }
+
+            // Get the subdomain index
+            const domainIndex = parts.length - tldParts - 1;
+            if (domainIndex > 0) {
+                // Return everything before the domain name, joined by dots
+                return parts.slice(0, domainIndex).join('.');
+            }
+
+            return null; // No subdomain
+        }
+
+        // Get TLD type
+        function getTLDType(tld) {
+            return TLD_TYPES[tld] || 'Other';
+        }
+
+        // Generate n-grams
+        function generateNgrams(text, n) {
+            const ngrams = [];
+            for (let i = 0; i <= text.length - n; i++) {
+                ngrams.push(text.substr(i, n));
+            }
+            return ngrams;
+        }
+
+        // Handle file upload
+        function handleFileUpload() {
+            const file = document.getElementById('csvFile').files[0];
+            if (!file) {
+                showError('Please select a file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    showLoading(true);
+                    hideError();
+                    hideSuccess();
+
+                    // Process after a small delay to show loading state
+                    setTimeout(() => {
+                        const text = e.target.result;
+                        const lines = text.split('\n').filter(line => line.trim());
+
+                        // Reset data
+                        analysisData = {
+                            domains: [],
+                            tlds: {},
+                            subdomains: {},
+                            lengths: {},
+                            unigrams: {},
+                            bigrams: {},
+                            trigrams: {}
+                        };
+
+                        // Process each domain
+                        lines.forEach(line => {
+                            const domain = line.trim();
+                            if (domain && domain.includes('.')) {
+                                analysisData.domains.push(domain);
+
+                                // TLD analysis
+                                const tld = extractTLD(domain);
+                                analysisData.tlds[tld] = (analysisData.tlds[tld] || 0) + 1;
+
+                                // Subdomain analysis
+                                const subdomain = extractSubdomain(domain);
+                                if (subdomain) {
+                                    analysisData.subdomains[subdomain] = (analysisData.subdomains[subdomain] || 0) + 1;
+                                } else {
+                                    // Count domains without subdomains as "(none)"
+                                    analysisData.subdomains['(none)'] = (analysisData.subdomains['(none)'] || 0) + 1;
+                                }
+
+                                // Domain length analysis
+                                const domainName = extractDomainName(domain);
+                                const length = domainName.length;
+                                analysisData.lengths[length] = (analysisData.lengths[length] || 0) + 1;
+
+                                // N-gram analysis
+                                generateNgrams(domainName, 1).forEach(ng => {
+                                    analysisData.unigrams[ng] = (analysisData.unigrams[ng] || 0) + 1;
+                                });
+                                generateNgrams(domainName, 2).forEach(ng => {
+                                    analysisData.bigrams[ng] = (analysisData.bigrams[ng] || 0) + 1;
+                                });
+                                generateNgrams(domainName, 3).forEach(ng => {
+                                    analysisData.trigrams[ng] = (analysisData.trigrams[ng] || 0) + 1;
+                                });
+                            }
+                        });
+
+                        showLoading(false);
+
+                        // Update UI
+                        document.getElementById('totalDomains').textContent = analysisData.domains.length.toLocaleString();
+                        document.getElementById('uniqueTLDs').textContent = Object.keys(analysisData.tlds).length;
+                        document.getElementById('uniqueLengths').textContent = Object.keys(analysisData.lengths).length;
+
+                        // Display results
+                        displayTLDAnalysis();
+                        displaySubdomainAnalysis();
+                        displayLengthAnalysis();
+                        displayNgramAnalysis();
+
+                        // Show results section
+                        document.getElementById('results').style.display = 'block';
+
+                        showSuccess(`Successfully analyzed ${analysisData.domains.length} domains!`);
+                    }, 100);
+                } catch (err) {
+                    showLoading(false);
+                    showError('Error parsing file: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Display TLD Analysis
+        function displayTLDAnalysis() {
+            // Calculate total of all TLD counts
+            const totalTLDs = Object.values(analysisData.tlds).reduce((sum, count) => sum + count, 0);
+            
+            const sorted = Object.entries(analysisData.tlds)
+                .map(([tld, count]) => ({
+                    tld,
+                    count,
+                    type: getTLDType(tld),
+                    percentage: totalTLDs > 0 ? ((count / totalTLDs) * 100).toFixed(2) : 0
+                }))
+                .sort((a, b) => b.count - a.count);
+
+            const tbody = document.getElementById('tldTable');
+            tbody.innerHTML = sorted.map(item => `
+                <tr>
+                    <td><strong>.${item.tld}</strong></td>
+                    <td>${item.type}</td>
+                    <td>${item.count}</td>
+                    <td>${item.percentage}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // Display Subdomain Analysis
+        function displaySubdomainAnalysis() {
+            // Calculate total of all subdomain frequencies
+            const totalSubdomains = Object.values(analysisData.subdomains).reduce((sum, frequency) => sum + frequency, 0);
+            
+            const sorted = Object.entries(analysisData.subdomains)
+                .map(([subdomain, frequency]) => ({
+                    subdomain,
+                    frequency,
+                    percentage: totalSubdomains > 0 ? ((frequency / totalSubdomains) * 100).toFixed(2) : 0
+                }))
+                .sort((a, b) => b.frequency - a.frequency);
+
+            const tbody = document.getElementById('subdomainTable');
+            if (sorted.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #95a5a6;">No data available</td></tr>';
+            } else {
+                tbody.innerHTML = sorted.map(item => `
+                    <tr>
+                        <td>${item.subdomain === '(none)' ? `<em style="font-weight: 600;">${item.subdomain}</em>` : `<strong>${item.subdomain}</strong>`}</td>
+                        <td>${item.frequency}</td>
+                        <td>${item.percentage}%</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Display Length Analysis
+        function displayLengthAnalysis() {
+            // Calculate total of all length frequencies
+            const totalLengths = Object.values(analysisData.lengths).reduce((sum, frequency) => sum + frequency, 0);
+            
+            const sorted = Object.entries(analysisData.lengths)
+                .map(([length, frequency]) => ({
+                    length: parseInt(length),
+                    frequency,
+                    percentage: totalLengths > 0 ? ((frequency / totalLengths) * 100).toFixed(2) : 0
+                }))
+                .sort((a, b) => b.frequency - a.frequency);
+
+            const tbody = document.getElementById('lengthTable');
+            tbody.innerHTML = sorted.map(item => `
+                <tr>
+                    <td>${item.length}</td>
+                    <td>${item.frequency}</td>
+                    <td>${item.percentage}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // Display N-gram Analysis
+        function displayNgramAnalysis() {
+            displayNgramTable('unigrams', 'unigramTable');
+            displayNgramTable('bigrams', 'bigramTable');
+            displayNgramTable('trigrams', 'trigramTable');
+        }
+
+        // Display N-gram Table
+        function displayNgramTable(type, tableId) {
+            const data = analysisData[type];
+            
+            // Calculate total count of all n-grams
+            const totalCount = Object.values(data).reduce((sum, count) => sum + count, 0);
+            
+            const sorted = Object.entries(data)
+                .map(([ngram, count]) => ({
+                    ngram,
+                    count,
+                    percentage: totalCount > 0 ? ((count / totalCount) * 100).toFixed(2) : 0
+                }))
+                .sort((a, b) => b.count - a.count);
+
+            const tbody = document.getElementById(tableId);
+            if (sorted.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #95a5a6;">No data available</td></tr>';
+            } else {
+                tbody.innerHTML = sorted.map(item => `
+                    <tr>
+                        <td><strong>'${item.ngram}'</strong></td>
+                        <td>${item.count}</td>
+                        <td>${item.percentage}%</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Chart state tracking
+        let chartStates = {
+            unigram: { bar: null, pie: null },
+            bigram: { bar: null, pie: null },
+            trigram: { bar: null, pie: null }
+        };
+
+        // Toggle chart visibility and render
+        function toggleChart(gramType, chartType) {
+            const barContainerId = gramType + 'BarChart';
+            const pieContainerId = gramType + 'PieChart';
+            const barContainer = document.getElementById(barContainerId);
+            const pieContainer = document.getElementById(pieContainerId);
+
+            if (chartType === 'bar') {
+                barContainer.classList.toggle('show');
+                if (barContainer.classList.contains('show')) {
+                    renderNgramChart(gramType, 'bar');
+                }
+            } else if (chartType === 'pie') {
+                pieContainer.classList.toggle('show');
+                if (pieContainer.classList.contains('show')) {
+                    renderNgramChart(gramType, 'pie');
+                }
+            }
+        }
+
+        // Render bar or pie chart for n-grams
+        function renderNgramChart(gramType, chartType) {
+            let dataSource = analysisData.unigrams;
+            let canvasId, maxItems;
+
+            if (gramType === 'unigram') {
+                dataSource = analysisData.unigrams;
+                canvasId = chartType === 'bar' ? 'unigramBarCanvas' : 'unigramPieCanvas';
+                maxItems = 20;
+            } else if (gramType === 'bigram') {
+                dataSource = analysisData.bigrams;
+                canvasId = chartType === 'bar' ? 'bigramBarCanvas' : 'bigramPieCanvas';
+                maxItems = 15;
+            } else if (gramType === 'trigram') {
+                dataSource = analysisData.trigrams;
+                canvasId = chartType === 'bar' ? 'trigramBarCanvas' : 'trigramPieCanvas';
+                maxItems = 12;
+            }
+
+            const sorted = Object.entries(dataSource)
+                .map(([ngram, count]) => ({
+                    ngram,
+                    count
+                }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, maxItems);
+
+            const labels = sorted.map(item => `'${item.ngram}'`);
+            const data = sorted.map(item => item.count);
+
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+
+            // Destroy existing chart if it exists
+            if (chartStates[gramType][chartType]) {
+                chartStates[gramType][chartType].destroy();
+            }
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: chartType === 'pie',
+                        position: 'right'
+                    }
+                }
+            };
+
+            if (chartType === 'bar') {
+                chartStates[gramType][chartType] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Count',
+                            data: data,
+                            backgroundColor: '#3498db',
+                            borderColor: '#2980b9',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        ...chartOptions,
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else if (chartType === 'pie') {
+                const colors = [
+                    '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+                    '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#d35400',
+                    '#16a085', '#c0392b', '#8e44ad', '#27ae60', '#2c3e50'
+                ];
+
+                chartStates[gramType][chartType] = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors.slice(0, labels.length),
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tabName, event) {
+            if (event) {
+                event.preventDefault();
+            }
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        // Sort table
+        function sortTable(tabName, columnIndex) {
+            const table = document.querySelector(`#${tabName} table tbody`);
+            const rows = Array.from(table.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                const aVal = a.cells[columnIndex].textContent.trim();
+                const bVal = b.cells[columnIndex].textContent.trim();
+                const aNum = parseFloat(aVal.replace('%', '').replace(',', ''));
+                const bNum = parseFloat(bVal.replace('%', '').replace(',', ''));
+                return isNaN(aNum) ? aVal.localeCompare(bVal) : bNum - aNum;
+            });
+
+            table.innerHTML = '';
+            rows.forEach(row => table.appendChild(row));
+        }
+
+        // Export to CSV
+        function exportToCSV(type, filename) {
+            let csv = '';
+            if (type === 'tld') {
+                csv = 'TLD,Type,Count,Percentage\n';
+                document.querySelectorAll('#tld table tbody tr').forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const tld = cells[0].textContent.replace('.', '').trim();
+                    csv += `${tld},${cells[1].textContent},${cells[2].textContent},${cells[3].textContent}\n`;
+                });
+            } else if (type === 'length') {
+                csv = 'Domain Length,Count,Percentage\n';
+                document.querySelectorAll('#length table tbody tr').forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    csv += `${cells[0].textContent},${cells[1].textContent},${cells[2].textContent}\n`;
+                });
+            } else if (type === 'subdomain') {
+                csv = 'Subdomain,Count,Percentage\n';
+                const totalSubdomains = Object.values(analysisData.subdomains).reduce((sum, frequency) => sum + frequency, 0);
+                Object.entries(analysisData.subdomains)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([subdomain, frequency]) => {
+                        const percentage = totalSubdomains > 0 ? ((frequency / totalSubdomains) * 100).toFixed(2) : 0;
+                        csv += `${subdomain},${frequency},${percentage}%\n`;
+                    });
+            } else if (type === 'unigram') {
+                csv = 'N-gram,Count,Percentage\n';
+                const totalUnigrams = Object.values(analysisData.unigrams).reduce((sum, count) => sum + count, 0);
+                Object.entries(analysisData.unigrams)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([ngram, count]) => {
+                        const percentage = totalUnigrams > 0 ? ((count / totalUnigrams) * 100).toFixed(2) : 0;
+                        csv += `${ngram},${count},${percentage}%\n`;
+                    });
+            } else if (type === 'bigram') {
+                csv = 'N-gram,Count,Percentage\n';
+                const totalBigrams = Object.values(analysisData.bigrams).reduce((sum, count) => sum + count, 0);
+                Object.entries(analysisData.bigrams)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([ngram, count]) => {
+                        const percentage = totalBigrams > 0 ? ((count / totalBigrams) * 100).toFixed(2) : 0;
+                        csv += `${ngram},${count},${percentage}%\n`;
+                    });
+            } else if (type === 'trigram') {
+                csv = 'N-gram,Count,Percentage\n';
+                const totalTrigrams = Object.values(analysisData.trigrams).reduce((sum, count) => sum + count, 0);
+                Object.entries(analysisData.trigrams)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([ngram, count]) => {
+                        const percentage = totalTrigrams > 0 ? ((count / totalTrigrams) * 100).toFixed(2) : 0;
+                        csv += `${ngram},${count},${percentage}%\n`;
+                    });
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Show error
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        // Hide error
+        function hideError() {
+            const errorDiv = document.getElementById('error');
+            errorDiv.classList.remove('show');
+        }
+
+        // Show success
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+            setTimeout(() => {
+                successDiv.classList.remove('show');
+            }, 4000);
+        }
+
+        // Hide success
+        function hideSuccess() {
+            const successDiv = document.getElementById('success');
+            successDiv.classList.remove('show');
+        }
+
+        // Show/hide loading
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (show) {
+                loading.classList.add('show');
+            } else {
+                loading.classList.remove('show');
+            }
+        }
+
+        // Drag and drop
+        const uploadSection = document.getElementById('uploadSection');
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('drag-over');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('drag-over');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('csvFile').files = files;
+                handleFileUpload();
+            }
+        });
+    </script>
+</body>
+</html>
