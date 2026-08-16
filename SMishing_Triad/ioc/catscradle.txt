@@ -14,7 +14,7 @@
 # Note: this list may not have all activity seen in OTX due to merge issues.
 #
 # Created: 20250105
-# Updated: 20260605
+# Updated: 20260816
 #
 # ------------------------------------[DOMAINS]-------------------------------------
 

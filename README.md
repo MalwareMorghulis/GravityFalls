@@ -12,7 +12,7 @@ As of August 2026, the data has been normalized (thank you to DomainTools)!
   - v2: Revision of experiment per recommendation of IEEE-CARS 2026 peer-review.
 - **SMishing_Triad**
   - **domaintools_raw_export**: Contains data dumps during investigative process for hunting infrastructure, now recaptured thanks to DomainTools.
-  - **ioc**: Contains observed IOCs, no regexes, no predicted domains.
+  - **ioc**: Contains observed IOCs, no regexes, no predicted domains, per activity cluster. Data is now deduplicated (hostile domains that knowingly used custom subdomains are kept in the list).
   - **predicted_patterns**: Contains original regexes used for sinkholing, per activity cluster.
 - **Unattributed**: IOCs not yet linked to any group.
 

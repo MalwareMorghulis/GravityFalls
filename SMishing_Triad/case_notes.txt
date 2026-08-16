@@ -1,9 +1,12 @@
 # -------------------------------------[INFO]---------------------------------------
 #
-# These notes are not necessarily complete knowledge dumps.
+# These notes are not necessarily complete knowledge dumps - it will be backfilled as data migrates over.
 # They provide context during some moments of pivoting as to why these clusters were linked together.
 #
 # ----------------------------------------------------------------------------------
+
+# 20241116
+Pandorasbox; the infotrack domains utilize a hostname or subdomain of "u".
 
 # 20241225
 Pandorasbox; Sender: "pnokwgifk" at "rambler[.]ru" Notes: Use of Aliyun INFRAX and Dominet (HK) Limited for registar Certificate issued by CloudFlare. Commonly utilizing *.top TLDs and "/us" URI suggesting regional targeting.
@@ -34,4 +37,4 @@ The senders start using clever domain tricks such as: "REALDOMAIN@HOSTILEDOMAIN/
 In this case, the attacker spoofed Fedex and tried to redirect to "best*[.]ink". The registrant is associated with an alias: "Johnson William" and fake locations. The actor likely chose to host domains in Cloudflare infrastructure for robustness and to avoid easy blocks. They are associated with a collection of DGA domains following a distinct pattern.
 
 # 20260323
-Easy Rider has evolved with different variations of senders: domestic phones, international phones, iCloud, random emails. Fake registrant users with nonsensical names or fake addresses. Ultimately, infrastructure is consistently associated with CloudFlare, Dominet (HK), or Aliyun.
+Easy Rider has evolved with different variations of senders: domestic phones, international phones, iCloud, random emails. Fake registrant users with nonsensical names or fake addresses. Ultimately, infrastructure is consistently associated with CloudFlare, Dominet (HK), or Aliyun. The content of text messages and title errors, these suggest the author is not necessarily a local citizen.

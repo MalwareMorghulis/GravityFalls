@@ -20,7 +20,7 @@
 # The DGA pattern was observed to be related and similar in nature to Pandoras Box.
 #
 # Created: 20241225
-# Updated: 20260323
+# Updated: 20260816
 #
 # Special Thanks to DomainTools for IRIS Investigate and enabling this research!
 # Thanks to John C. for providing IOC samples!
@@ -347,8 +347,6 @@
 0.0.0.0 wsdot-yki.wang
 0.0.0.0 wsdot-za-k.wang
 0.0.0.0 wsdot-zok.wang
-
-# 20250624
 0.0.0.0 com-biud.xin
 0.0.0.0 com-cenu.xin
 0.0.0.0 com-chck.xin
