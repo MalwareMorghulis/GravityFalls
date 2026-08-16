@@ -375,6 +375,8 @@
 0.0.0.0 com-trackzno.top
 0.0.0.0 com-trackzpr.top
 0.0.0.0 com-trackzqj.top
+
+# 20241224
 0.0.0.0 usps.com-trackxpc.top
 0.0.0.0 usps.com-trackuki.top
 0.0.0.0 usps.com-trackzgz.top
@@ -3350,6 +3352,7 @@
 0.0.0.0 infotrueg.top
 0.0.0.0 infotrust.top
 0.0.0.0 infotruth.top
+
 # 20240721
 0.0.0.0 us-usps-aa.xyz
 0.0.0.0 us-usps-aaauuz.xyz
