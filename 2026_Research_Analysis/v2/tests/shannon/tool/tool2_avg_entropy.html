@@ -12,6 +12,36 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9ff;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: #e5e7eb;
+            --border-hover: #764ba2;
+            --card-shadow: rgba(0,0,0,0.3);
+            --table-hover: #f9fafb;
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+        }
+        
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border-color: #2d3561;
+            --border-hover: #667eea;
+            --card-shadow: rgba(0,0,0,0.7);
+            --table-hover: #0f3460;
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,48 +50,128 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
         }
         
         .container {
-            background: white;
+            background: var(--bg-primary);
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px var(--card-shadow);
             padding: 40px;
             max-width: 900px;
             width: 100%;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .header-content {
+            flex: 1;
         }
         
         h1 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
             font-size: 28px;
+            transition: color 0.3s ease;
         }
         
         .subtitle {
-            color: #666;
-            margin-bottom: 30px;
+            color: var(--text-secondary);
             font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        /* Dark Mode Toggle Switch */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 30px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
         }
         
         .upload-area {
-            border: 3px dashed #667eea;
+            border: 3px dashed var(--gradient-start);
             border-radius: 10px;
             padding: 50px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: #f8f9ff;
+            background: var(--bg-secondary);
         }
         
         .upload-area:hover {
-            background: #eef1ff;
-            border-color: #764ba2;
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
             transform: translateY(-2px);
         }
         
         .upload-area.dragover {
-            background: #e0e7ff;
-            border-color: #4338ca;
+            background: var(--gradient-start);
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--gradient-start);
             transform: scale(1.02);
         }
         
@@ -72,14 +182,16 @@
         
         .upload-text {
             font-size: 18px;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 8px;
             font-weight: 500;
+            transition: color 0.3s ease;
         }
         
         .upload-hint {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
+            transition: color 0.3s ease;
         }
         
         input[type="file"] {
@@ -93,6 +205,7 @@
             padding: 25px;
             margin: 25px 0;
             color: white;
+            transition: all 0.3s ease;
         }
         
         .stats-title {
@@ -102,9 +215,17 @@
             text-align: center;
         }
         
+        .stats-hint {
+            font-size: 12px;
+            opacity: 0.85;
+            margin-bottom: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+        
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
         
@@ -126,6 +247,44 @@
         .stat-value {
             font-size: 24px;
             font-weight: 700;
+        }
+        
+        .stat-value-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            min-height: 36px;
+            font-weight: 600;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .copy-btn.copied {
+            background: rgba(76, 175, 80, 0.4);
+            border-color: rgba(76, 175, 80, 0.6);
         }
         
         .download-btn {
@@ -159,6 +318,7 @@
             display: none;
             font-size: 14px;
             font-weight: 500;
+            transition: all 0.3s ease;
         }
         
         .status.success {
@@ -168,6 +328,12 @@
             display: block;
         }
         
+        body.dark-mode .status.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid #6ee7b7;
+        }
+        
         .status.error {
             background: #fee2e2;
             color: #991b1b;
@@ -175,11 +341,23 @@
             display: block;
         }
         
+        body.dark-mode .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid #fca5a5;
+        }
+        
         .status.info {
             background: #dbeafe;
             color: #1e40af;
             border: 1px solid #93c5fd;
             display: block;
+        }
+        
+        body.dark-mode .status.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid #93c5fd;
         }
         
         .preview {
@@ -190,15 +368,17 @@
         .preview-title {
             font-size: 16px;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
+            transition: color 0.3s ease;
         }
         
         .table-container {
             max-height: 300px;
             overflow: auto;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
+            transition: border-color 0.3s ease;
         }
         
         table {
@@ -208,31 +388,42 @@
         }
         
         th {
-            background: #f3f4f6;
+            background: var(--bg-tertiary);
             padding: 12px 8px;
             text-align: left;
             font-weight: 600;
-            color: #374151;
+            color: var(--text-primary);
             position: sticky;
             top: 0;
-            border-bottom: 2px solid #d1d5db;
+            border-bottom: 2px solid var(--border-color);
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         td {
             padding: 10px 8px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: color 0.3s ease, border-color 0.3s ease;
         }
         
         tr:hover {
-            background: #f9fafb;
+            background: var(--table-hover);
         }
         
         .suspicious-row {
             background: #fef3c7;
         }
         
+        body.dark-mode .suspicious-row {
+            background: rgba(180, 83, 9, 0.3);
+        }
+        
         .suspicious-row:hover {
             background: #fde68a;
+        }
+        
+        body.dark-mode .suspicious-row:hover {
+            background: rgba(180, 83, 9, 0.5);
         }
         
         .flag-badge {
@@ -249,42 +440,131 @@
             color: #991b1b;
         }
         
+        body.dark-mode .flag-suspicious {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        
         .flag-normal {
-            background: #d1fae5;
-            color: #065f46;
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        body.dark-mode .flag-normal {
+            background: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+        
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .theme-toggle {
+                width: 100%;
+            }
+            
+            .toggle-label {
+                flex: 1;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-hint {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
-<body>
+<body class="dark-mode">
     <div class="container">
-        <h1>Shannon Entropy CSV Analyzer</h1>
-        <p class="subtitle">Upload your CSV to automatically flag domains based on Shannon entropy analysis</p>
+        <div class="header">
+            <div class="header-content">
+                <h1>🔍 Shannon Entropy Analyzer</h1>
+                <div class="subtitle">Upload CSV to analyze domain entropy and flag suspicious entries</div>
+            </div>
+            <div class="theme-toggle">
+                <label class="toggle-label">🌙 Dark</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
         
         <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-icon">📊</div>
-            <div class="upload-text">Click to upload or drag & drop</div>
-            <div class="upload-hint">CSV file with Domain, Domain_Portion, Shannon_Entropy, and Verdict columns</div>
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">Click to upload or drag and drop</div>
+            <div class="upload-hint">CSV file with domain entropy data</div>
             <input type="file" id="fileInput" accept=".csv">
         </div>
-
+        
         <div class="stats-container" id="statsContainer">
-            <div class="stats-title">Analysis Results</div>
+            <div class="stats-title">📊 Analysis Results</div>
+            <div class="stats-hint">💡 Verdict: Analyst's pre-determined decision on domain classification</div>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-label">Total Domains</div>
-                    <div class="stat-value" id="totalCount">-</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="totalCount">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('totalCount')" title="Copy to clipboard">📋</button>
+                    </div>
                 </div>
                 <div class="stat-item">
+                    <div class="stat-label">Count: Flagged Suspicious</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="suspiciousCount">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('suspiciousCount')" title="Copy to clipboard">📋</button>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Percentage: Flagged Suspicious</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="suspiciousPercent">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('suspiciousPercent')" title="Copy to clipboard">📋</button>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Verdict: Benign</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="verdictBenign">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('verdictBenign')" title="Copy to clipboard">📋</button>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Verdict: Evil</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="verdictEvil">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('verdictEvil')" title="Copy to clipboard">📋</button>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Verdict: N/A</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="verdictNA">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('verdictNA')" title="Copy to clipboard">📋</button>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
                     <div class="stat-label">Mean Entropy</div>
-                    <div class="stat-value" id="meanValue">-</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="meanValue">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('meanValue')" title="Copy to clipboard">📋</button>
+                    </div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Std Deviation</div>
-                    <div class="stat-value" id="stdValue">-</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Suspicious</div>
-                    <div class="stat-value" id="suspiciousCount">-</div>
+                    <div class="stat-value-wrapper">
+                        <div class="stat-value" id="stdValue">-</div>
+                        <button class="copy-btn" onclick="copyToClipboard('stdValue')" title="Copy to clipboard">📋</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -317,6 +597,7 @@
     <script>
         let processedCSV = null;
         let processedData = null;
+        let originalFileName = null;
 
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -324,6 +605,24 @@
         const statsContainer = document.getElementById('statsContainer');
         const downloadBtn = document.getElementById('downloadBtn');
         const preview = document.getElementById('preview');
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Dark mode toggle functionality
+        themeToggle.addEventListener('change', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // Load theme preference from localStorage (default to dark mode)
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        } else {
+            body.classList.remove('dark-mode');
+            themeToggle.checked = false;
+        }
 
         fileInput.addEventListener('change', handleFile);
 
@@ -356,6 +655,7 @@
 
         function processFile(file) {
             showStatus('Processing file...', 'info');
+            originalFileName = file.name.replace('.csv', '');
             
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -443,8 +743,29 @@
                 document.getElementById('totalCount').textContent = processedData.length.toLocaleString();
                 document.getElementById('meanValue').textContent = mean.toFixed(7);
                 document.getElementById('stdValue').textContent = stdDev.toFixed(7);
-                document.getElementById('suspiciousCount').textContent = suspiciousCount.toLocaleString() + 
-                    ' (' + ((suspiciousCount/processedData.length)*100).toFixed(1) + '%)';
+                document.getElementById('suspiciousCount').textContent = suspiciousCount.toLocaleString();
+                document.getElementById('suspiciousPercent').textContent = ((suspiciousCount/processedData.length)*100).toFixed(1) + '%';
+                
+                // Count verdicts
+                const verdictColumn = headers[3];
+                let benignCount = 0;
+                let evilCount = 0;
+                let naCount = 0;
+                
+                processedData.forEach(row => {
+                    const verdict = (row[verdictColumn] || '').toString().trim().toLowerCase();
+                    if (verdict === 'benign') {
+                        benignCount++;
+                    } else if (verdict === 'evil') {
+                        evilCount++;
+                    } else {
+                        naCount++;
+                    }
+                });
+                
+                document.getElementById('verdictBenign').textContent = benignCount.toLocaleString();
+                document.getElementById('verdictEvil').textContent = evilCount.toLocaleString();
+                document.getElementById('verdictNA').textContent = naCount.toLocaleString();
 
                 statsContainer.style.display = 'block';
                 downloadBtn.style.display = 'block';
@@ -476,7 +797,7 @@
                     <td>${row[headers[0]] || ''}</td>
                     <td>${row[headers[1]] || ''}</td>
                     <td>${typeof row[headers[2]] === 'number' ? row[headers[2]].toFixed(7) : row[headers[2]]}</td>
-                    <td>${row[headers[3]] || ''}</td>
+                    <td>${row[headers[3]] || 'N/A'}</td>
                     <td><span class="flag-badge ${flagClass}">${row.Flag}</span></td>
                 `;
                 tbody.appendChild(tr);
@@ -497,8 +818,7 @@
                 const a = document.createElement('a');
                 a.href = url;
                 
-                const timestamp = new Date().toISOString().slice(0,10);
-                a.download = `shannon_entropy_flagged_${timestamp}.csv`;
+                a.download = `${originalFileName}_flagged.csv`;
                 
                 document.body.appendChild(a);
                 a.click();
@@ -515,6 +835,25 @@
             statusDiv.textContent = message;
             statusDiv.className = 'status ' + type;
             statusDiv.style.display = 'block';
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                btn.classList.add('copied');
+                const originalText = btn.textContent;
+                btn.textContent = '✓';
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(() => {
+                showStatus('Failed to copy to clipboard', 'error');
+            });
         }
     </script>
 </body>

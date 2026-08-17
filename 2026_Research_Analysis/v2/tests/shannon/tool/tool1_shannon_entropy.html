@@ -360,7 +360,7 @@
                     <button class="verdict-btn" onclick="selectVerdictMode('benign')">Benign</button>
                     <button class="verdict-btn" onclick="selectVerdictMode('evil')">Evil</button>
                 </div>
-                <div class="verdict-option-label" id="verdictOptionLabel">Pre-fills verdict cell with individual domain name for manual change later.</div>
+                <div class="verdict-option-label" id="verdictManualHint" style="margin-top: 10px; color: #ffa500; font-style: italic;">⚠️ Pre-filled with "N/A" for manual review — analyze each domain and classify it as "benign" or "evil".</div>
             </div>
         </div>
         
@@ -442,20 +442,20 @@
             const toggle = document.getElementById('verdictToggle');
             const options = document.getElementById('verdictOptions');
             const label = document.getElementById('verdictModeLabel');
-            const optionLabel = document.getElementById('verdictOptionLabel');
+            const manualHint = document.getElementById('verdictManualHint');
             
             if (toggle.checked) {
                 // Auto mode
                 verdictMode = 'auto';
                 label.textContent = 'Auto';
                 options.classList.add('show');
-                optionLabel.textContent = 'Select verdict for all rows';
+                manualHint.style.display = 'none';
             } else {
                 // Manual mode
                 verdictMode = 'manual';
                 label.textContent = 'Manual';
                 options.classList.remove('show');
-                optionLabel.textContent = 'Pre-fills verdict cell with individual domain name for manual change later.';
+                manualHint.style.display = 'block';
                 autoVerdictValue = null;
                 // Remove selection
                 document.querySelectorAll('.verdict-btn').forEach(btn => {
@@ -473,9 +473,6 @@
             });
             
             event.target.classList.add('selected');
-            
-            const optionLabel = document.getElementById('verdictOptionLabel');
-            optionLabel.textContent = `All rows will be marked as: ${mode.toUpperCase()}`;
         }
 
         document.getElementById('probFile').addEventListener('change', function(e) {
@@ -638,8 +635,8 @@
                         // Use the selected auto verdict value
                         verdict = autoVerdictValue;
                     } else {
-                        // Manual mode: pre-fill with the domain name for manual review
-                        verdict = fullDomain;
+                        // Manual mode: pre-fill with N/A for manual review
+                        verdict = 'N/A';
                     }
                     
                     const domainPortion = extractDomainPortion(fullDomain);

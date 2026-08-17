@@ -666,9 +666,16 @@
                 <button class="tab-btn" onclick="switchTab('bigram', event)">2-gram Analysis</button>
                 <button class="tab-btn" onclick="switchTab('trigram', event)">3-gram Analysis</button>
             </div>
+            
+            <div class="export-section" style="text-align: center; margin-bottom: 20px;">
+                <button class="export-btn" onclick="exportAllTabs()" style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); font-weight: bold;">📦 Export All Tabs</button>
+            </div>
 
             <!-- TLD Analysis Tab -->
             <div id="tld" class="tab-content active">
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('tld')">📥 Export TLD Analysis</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -682,13 +689,13 @@
                         <tbody id="tldTable"></tbody>
                     </table>
                 </div>
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportToCSV('tld', 'tld_analysis.csv')">📥 Export TLD Analysis</button>
-                </div>
             </div>
 
             <!-- Subdomain Analysis Tab -->
             <div id="subdomain" class="tab-content">
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('subdomain')">📥 Export Subdomain Analysis</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -701,13 +708,13 @@
                         <tbody id="subdomainTable"></tbody>
                     </table>
                 </div>
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportToCSV('subdomain', 'subdomain_analysis.csv')">📥 Export Subdomain Analysis</button>
-                </div>
             </div>
 
             <!-- Domain Length Tab -->
             <div id="length" class="tab-content">
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('length')">📥 Export Length Analysis</button>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -720,9 +727,6 @@
                         <tbody id="lengthTable"></tbody>
                     </table>
                 </div>
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportToCSV('length', 'domain_length_analysis.csv')">📥 Export Length Analysis</button>
-                </div>
             </div>
 
             <!-- 1-gram Analysis Tab -->
@@ -730,6 +734,10 @@
                 <div class="chart-toggle-section">
                     <button class="toggle-btn" onclick="toggleChart('unigram', 'bar')">📊 Bar Chart</button>
                     <button class="toggle-btn" onclick="toggleChart('unigram', 'pie')">🥧 Pie Chart</button>
+                </div>
+                
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('unigram')">📥 Export 1-gram Analysis</button>
                 </div>
 
                 <div class="chart-container" id="unigramBarChart">
@@ -756,9 +764,6 @@
                         <tbody id="unigramTable"></tbody>
                     </table>
                 </div>
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportToCSV('unigram', '1gram_analysis.csv')">📥 Export 1-gram Analysis</button>
-                </div>
             </div>
 
             <!-- 2-gram Analysis Tab -->
@@ -766,6 +771,10 @@
                 <div class="chart-toggle-section">
                     <button class="toggle-btn" onclick="toggleChart('bigram', 'bar')">📊 Bar Chart</button>
                     <button class="toggle-btn" onclick="toggleChart('bigram', 'pie')">🥧 Pie Chart</button>
+                </div>
+                
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('bigram')">📥 Export 2-gram Analysis</button>
                 </div>
 
                 <div class="chart-container" id="bigramBarChart">
@@ -792,9 +801,6 @@
                         <tbody id="bigramTable"></tbody>
                     </table>
                 </div>
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportToCSV('bigram', '2gram_analysis.csv')">📥 Export 2-gram Analysis</button>
-                </div>
             </div>
 
             <!-- 3-gram Analysis Tab -->
@@ -802,6 +808,10 @@
                 <div class="chart-toggle-section">
                     <button class="toggle-btn" onclick="toggleChart('trigram', 'bar')">📊 Bar Chart</button>
                     <button class="toggle-btn" onclick="toggleChart('trigram', 'pie')">🥧 Pie Chart</button>
+                </div>
+                
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportToCSV('trigram')">📥 Export 3-gram Analysis</button>
                 </div>
 
                 <div class="chart-container" id="trigramBarChart">
@@ -827,9 +837,6 @@
                         </thead>
                         <tbody id="trigramTable"></tbody>
                     </table>
-                </div>
-                <div class="export-section">
-                    <button class="export-btn" onclick="exportToCSV('trigram', '3gram_analysis.csv')">📥 Export 3-gram Analysis</button>
                 </div>
             </div>
         </div>
@@ -885,6 +892,7 @@
             'kr': 'ccTLD', 'za': 'ccTLD', 'sg': 'ccTLD', 'hk': 'ccTLD', 'tw': 'ccTLD', 'nz': 'ccTLD',
         };
 
+        let originalFileName = ''; // Store the original filename
         let analysisData = {
             domains: [],
             tlds: {},
@@ -1066,6 +1074,9 @@
                 showError('Please select a file');
                 return;
             }
+            
+            // Capture original filename and remove .csv extension
+            originalFileName = file.name.replace('.csv', '').replace('.CSV', '');
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -1417,7 +1428,29 @@
         }
 
         // Export to CSV
-        function exportToCSV(type, filename) {
+        function exportToCSV(type) {
+            // Generate filename based on type and original filename
+            let filename;
+            if (!originalFileName) {
+                originalFileName = 'domains'; // Fallback name
+            }
+            
+            if (type === 'tld') {
+                filename = `${originalFileName}_tld.csv`;
+            } else if (type === 'subdomain') {
+                filename = `${originalFileName}_subdomains.csv`;
+            } else if (type === 'length') {
+                filename = `${originalFileName}_length.csv`;
+            } else if (type === 'unigram') {
+                filename = `${originalFileName}_1gram.csv`;
+            } else if (type === 'bigram') {
+                filename = `${originalFileName}_2gram.csv`;
+            } else if (type === 'trigram') {
+                filename = `${originalFileName}_3gram.csv`;
+            } else {
+                filename = `${originalFileName}_export.csv`;
+            }
+            
             let csv = '';
             if (type === 'tld') {
                 csv = 'TLD,Type,Count,Percentage\n';
@@ -1479,6 +1512,23 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // Export all tabs as separate CSV files
+        function exportAllTabs() {
+            if (!originalFileName) {
+                originalFileName = 'domains'; // Fallback name
+            }
+            
+            const types = ['tld', 'subdomain', 'length', 'unigram', 'bigram', 'trigram'];
+            types.forEach(type => {
+                // Add a small delay between downloads to avoid browser blocking
+                setTimeout(() => {
+                    exportToCSV(type);
+                }, 100);
+            });
+            
+            showSuccess(`✓ Exporting all 6 analysis files...`);
         }
 
         // Show error
