@@ -10,8 +10,10 @@
 - General Rule-of-Thumb for Type-2 Hypervisors: Ensure that the VM has no more than 50\% of all physical resources allocated. Due to operating both the Guest and Host OS simultaneously.
 - VMware Workstation Pro was free for personal use through Broadcom, as of November 2024.
 
+# --------------------------------------------------------------------------------------------------------
+
 # Install Tool Dependencies
-## Python, Git, Repo Refresh
+## Python3, Git, Repo Refresh
 - $ sudo apt update
 - $ sudo apt install git
 - $ sudo apt install python3-pip
@@ -25,12 +27,18 @@
 - $ sudo apt install ./docker-desktop-amd64.deb
 - # Docker Docs: https://docs.docker.com/desktop/setup/install/linux/ubuntu/
 
-## Install Exp0se on Github
+# --------------------------------------------------------------------------------------------------------
+
+## Install Exp0se on Github (Python3)
 - $ git clone https://github.com/exp0se/dga_detector.git
 - $ cd dga_detector/
-- $ python -m venv .venv
+- $ python3 -m venv .venv
 - $ source .venv/bin/activate
-- $ (venv) python dga_detector.py -f FILE
+- $ (venv) python3 -m pip install -r requirements.txt
+- $ (venv) python3 dga_detector.py -f FILE
+- **NOTE:**: the input file does not have a header line here (remove "domains" from the first cell if it exists)
+
+# --------------------------------------------------------------------------------------------------------
 
 ## DGA_Detection by MiaWallace0618 on Github: https://github.com/miaWallace0618/DGA_Detection
 - Download the Pre-Built Docker Image from Author's Pre-Built Docker Image on Google Drive - https://drive.google.com/file/d/1DXPTtse12P29IwuEX8IdJNiiVWB_OaNS/view?usp=sharing
@@ -46,15 +54,37 @@
 ---- Body Key (typed): file
 ---- Body Key Type (dropdown option): File
 ---- Body Value (selected file): INPUT_FILE
----- **NOTE**: the input file is just raw text row-by-row list of domains (input does not have a header line).
+---- **NOTE**: the input file is just raw text row-by-row list of domains (input does not have a header line, remove "domains" if it exists as the first cell).
 ---- **Details**: When using Postman, select the body tab under the GET request field. Check the radio button for "form-data". The Key-Value Table will appear. Key name must be "file" (lowercase), but Postman also provides a dropdown within the same box. Set the Key field's dropbox with type: "File" (capitalized). In the Value field, you can add the DGA analysis file with the "Select Files" button. Then click "SEND" to submit the DGA analysis file to DGA_Detection Docker instance on testbed workstation. The response will return as an array in JSON.
 
-## COSSAS DGAD Docker
+# --------------------------------------------------------------------------------------------------------
+
+## COSSAS DGAD Docker (Preparation, offline)
 - $ sudo docker pull registry.gitlab.com/cossas/dgad:4.1.1 -OR- $ sudo docker image save -o cossas_dgad.tar registry.gitlab.com/cossas/dgad:4.1.1 # TO SAVE LOCALLY
 - $ chmod 664 cossas_dgad.tar
 - $ docker load < cossas_dgad.tar
-- # For bulk domains: pipe data to the docker container.
-- $ cat ../807/csv/INPUT.csv | sudo docker run -i registry.gitlab.com/cossas/dgad:4.1.1 client -fmt csv -f - > OUTPUT.json
+
+## COSSAS DGAD Docker (Bulk Domain Check, online)
+- $ cat ../PATH/INPUT.csv | sudo docker run -i registry.gitlab.com/cossas/dgad:4.1.1 client -fmt csv -f - --domains_column domains > OUTPUT.json
 -- **NOTE**: This tool expects the input or CSV file to have a header line of "domains".
--- For 1-off domains run this:
+-- This will pull the image if it cannot find one locally or offline.
+
+### COSSAS Debugging (Execution)
+- Error:
+-- "CRITICAL: root: you must have a {domains_column} column in your csv/jsonl file"
+- Reason:
+-- The file is looking for the "domains" keyword, this is potentially an encoding error as well.
+- Remediation:
+-- If the COSSAS DGAD does not cooperate, then use the optional explicit argument: "--domains_column domains". The tool executes it as implied, but may help.
+-- Use Notepad++ to convert the file from "Windows (CR LF)" to "Unix (LF)" and change encoding from "UTF-8 BOM" to "UTF-8", check that the first token is "domains", then save files again.
+
+### COSSAS Debugging (Skipping)
+- Error:
+-- "WARNING:root:will skip domains ['domain, 'domain', ... , 'domain']"
+- Reason:
+-- COSSAS DGA tool cannot handle domain length (ie: crazy-long ISP router names).
+- Remediation:
+-- Skip domain or unable to test.
+
+## COSSAS DGAD Docker (1-off Domain Check, online)
 --- $ sudo docker run registry.gitlab.com/cossas/dgad:4.1.1 client -d DOMAIN

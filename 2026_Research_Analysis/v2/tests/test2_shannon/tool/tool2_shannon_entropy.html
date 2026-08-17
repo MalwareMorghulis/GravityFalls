@@ -79,11 +79,34 @@
             padding: 10px;
             border: 2px dashed #555;
             border-radius: 4px;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-input:hover {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .file-input.drag-over {
+            border-color: #2980b9;
+            background-color: rgba(52, 152, 219, 0.2);
+            box-shadow: inset 0 0 10px rgba(52, 152, 219, 0.3);
         }
 
         body.light-mode .file-input {
             border-color: #ddd;
+        }
+
+        body.light-mode .file-input:hover {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.08);
+        }
+
+        body.light-mode .file-input.drag-over {
+            border-color: #2980b9;
+            background-color: rgba(52, 152, 219, 0.15);
+            box-shadow: inset 0 0 10px rgba(52, 152, 219, 0.2);
         }
 
         label {
@@ -337,14 +360,18 @@
         <h1>Shannon Entropy Calculator</h1>
         <p>Upload your CSV files to calculate Shannon Entropy for all domains.</p>
         
-        <div class="file-input">
+        <div class="file-input" id="probFileDropZone" style="cursor: pointer;">
             <label for="probFile">1. Probability.csv (with header):</label>
+            <div style="font-size: 12px; color: #999; margin-top: 5px;">💡 Drag and drop file here, or click to browse</div>
             <input type="file" id="probFile" accept=".csv">
+            <div id="probFileIndicator" style="font-size: 12px; color: #6ee7b7; margin-top: 8px; font-weight: 500; display: none;">✓ File selected: <span id="probFileName"></span></div>
         </div>
         
-        <div class="file-input">
-            <label for="domainsFile">2. Domains.csv (without header):</label>
+        <div class="file-input" id="domainsFileDropZone" style="cursor: pointer;">
+            <label for="domainsFile">2. Domains.csv (with or without header):</label>
+            <div style="font-size: 12px; color: #999; margin-top: 5px;">💡 Drag and drop file here, or click to browse</div>
             <input type="file" id="domainsFile" accept=".csv">
+            <div id="domainsFileIndicator" style="font-size: 12px; color: #6ee7b7; margin-top: 8px; font-weight: 500; display: none;">✓ File selected: <span id="domainsFileName"></span></div>
             
             <div class="verdict-control">
                 <div class="verdict-label">
@@ -478,6 +505,8 @@
         document.getElementById('probFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                document.getElementById('probFileName').textContent = file.name;
+                document.getElementById('probFileIndicator').style.display = 'block';
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     probData = event.target.result;
@@ -490,12 +519,80 @@
         document.getElementById('domainsFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                document.getElementById('domainsFileName').textContent = file.name;
+                document.getElementById('domainsFileIndicator').style.display = 'block';
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     domainsData = event.target.result;
                     showStatus('✓ Domains file loaded', 'success');
                 };
                 reader.readAsText(file);
+            }
+        });
+
+        // Drag and drop for Probability file
+        const probFileDropZone = document.getElementById('probFileDropZone');
+        const probFileInput = document.getElementById('probFile');
+        
+        probFileDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            probFileDropZone.classList.add('drag-over');
+        });
+
+        probFileDropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            probFileDropZone.classList.remove('drag-over');
+        });
+
+        probFileDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            probFileDropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Update the file input with the dropped file
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                probFileInput.files = dataTransfer.files;
+                
+                // Trigger change event to update display
+                const event = new Event('change', { bubbles: true });
+                probFileInput.dispatchEvent(event);
+            }
+        });
+
+        // Drag and drop for Domains file
+        const domainsFileDropZone = document.getElementById('domainsFileDropZone');
+        const domainsFileInput = document.getElementById('domainsFile');
+        
+        domainsFileDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            domainsFileDropZone.classList.add('drag-over');
+        });
+
+        domainsFileDropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            domainsFileDropZone.classList.remove('drag-over');
+        });
+
+        domainsFileDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            domainsFileDropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Update the file input with the dropped file
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                domainsFileInput.files = dataTransfer.files;
+                
+                // Trigger change event to update display
+                const event = new Event('change', { bubbles: true });
+                domainsFileInput.dispatchEvent(event);
             }
         });
 
@@ -540,10 +637,20 @@
                 showStatus(`Loaded ${charProbMap.size} characters: ${charList}. Parsing domains...`);
                 
                 // Parse domains data (keep as strings, don't convert to numbers)
-                const domains = Papa.parse(domainsData, {
+                let domainsArray = Papa.parse(domainsData, {
                     header: false,
                     skipEmptyLines: true
                 });
+                
+                // Filter out header row if first row contains "domains" in the first column
+                if (domainsArray.data.length > 0) {
+                    const firstRowFirstValue = (domainsArray.data[0][0] || '').toString().trim().toLowerCase();
+                    if (firstRowFirstValue === 'domains') {
+                        domainsArray.data = domainsArray.data.slice(1); // Remove the first row
+                    }
+                }
+                
+                const domains = domainsArray;
                 
                 showStatus(`Processing ${domains.data.length} domains...`);
                 

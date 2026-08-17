@@ -1,11 +1,11 @@
-# Instructions - Tool 1 (Entropy Calculator)
+# Instructions - Tool 2 (Entropy Calculator)
 1) Open "tool1_shannon_entropy.html"
 2) Provide probabily character CSV file or generate your own (header row for the probability list is expected).
 3) Provide simple CSV of domains (no header necessary)
 4) Open the output file "shannon_ORIGINALFILENAME.csv"
 5) Adjust the "Verdict" column with "benign" or "evil" if working with uniform data (all evil or all known-good), or use manual if working with mixed data and you plan to adjust later (rows will be marked "N/A")s.
 
-# Instructions - Tool 2 (Entropy Analyzer)
+# Instructions - Tool 3 (Entropy Analyzer)
 6) Feed the "shannon_ORIGINALFILENAME.csv" (edited) file back to "tool2_avg_entropy.html" to see the overall spread.
 7) Export the "shannon_ORIGINALFILENAME_flagged.csv".
 8) Rename the flagged CSV export as necessary.
