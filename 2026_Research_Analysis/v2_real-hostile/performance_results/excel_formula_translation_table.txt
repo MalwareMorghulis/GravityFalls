@@ -1,0 +1,28 @@
+Shannon
+TP =COUNTIFS('TAB'!B:B,"evil",'TAB'!D:D,"suspicious")
+TN =COUNTIFS('TAB'!B:B,"benign",'TAB'!D:D,"normal")
+FP =COUNTIFS('TAB'!B:B,"benign",'TAB'!D:D,"suspicious")
+FN =COUNTIFS('TAB'!B:B,"evil",'TAB'!D:D,"normal")
+
+Exp0se
+TP =COUNTIFS('TAB'!B:B,"evil",'TAB'!E:E,"TRUE")
+TN =COUNTIFS('TAB'!B:B,"benign",'TAB'!E:E,"FALSE")
+FP =COUNTIFS('TAB'!B:B,"benign",'TAB'!E:E,"TRUE")
+FN =COUNTIFS('TAB'!B:B,"evil",'TAB'!E:E,"FALSE")
+
+Mia
+TP =COUNTIFS('TAB'!B:B,"evil",'TAB'!F:F,"dga")
+TN =COUNTIFS('TAB'!B:B,"benign",'TAB'!F:F,"legit")
+FP =COUNTIFS('TAB'!B:B,"benign",'TAB'!F:F,"dga")
+FN =COUNTIFS('TAB'!B:B,"evil",'TAB'!F:F,"legit")
+
+DGAD
+TP =COUNTIFS('TAB'!B:B,"evil",'TAB'!G:G,"TRUE")
+TN =COUNTIFS('TAB'!B:B,"benign",'TAB'!G:G,"FALSE")
+FP =COUNTIFS('TAB'!B:B,"benign",'TAB'!G:G,"TRUE")
+FN =COUNTIFS('TAB'!B:B,"evil",'TAB'!G:G,"FALSE")
+
+One-Offs
++COUNTIFS('TAB'!B:B,"evil/benign",'TAB'!X:X,"N/A")
+
+
