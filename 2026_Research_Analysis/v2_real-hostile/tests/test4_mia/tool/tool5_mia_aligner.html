@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Domain Prediction Aligner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9ff;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: #e5e7eb;
+            --border-hover: #667eea;
+            --card-shadow: rgba(0,0,0,0.1);
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border-color: #2d3561;
+            --border-hover: #667eea;
+            --card-shadow: rgba(0,0,0,0.5);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+        }
+
+        .container {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px var(--card-shadow);
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 28px;
+            transition: color 0.3s ease;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .upload-section {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .upload-section.drag-over {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--gradient-start);
+            transform: scale(1.01);
+        }
+
+        .file-input-group {
+            margin-bottom: 15px;
+        }
+
+        .file-input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .file-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-primary);
+        }
+
+        .drop-zone:hover {
+            border-color: var(--gradient-start);
+            background: var(--bg-secondary);
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--gradient-start);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .drop-zone-text {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .file-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+            display: block;
+        }
+
+        body.dark-mode .status.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid #6ee7b7;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            display: block;
+        }
+
+        body.dark-mode .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid #fca5a5;
+        }
+
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+            display: block;
+        }
+
+        body.dark-mode .status.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid #93c5fd;
+        }
+
+        .preview {
+            margin: 25px 0;
+            display: none;
+        }
+
+        .preview-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        .preview-table thead {
+            background: var(--bg-tertiary);
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .preview-table th {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .preview-table tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .preview-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            border: none;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .btn.show {
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        body.dark-mode .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        body.dark-mode .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-danger:active {
+            transform: translateY(0);
+        }
+
+        .download-btn {
+            display: none;
+        }
+
+        .download-btn.show {
+            display: inline-block;
+        }
+
+        .info-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--gradient-start);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .theme-toggle {
+                width: 100%;
+            }
+
+            .toggle-label {
+                flex: 1;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .preview-table {
+                font-size: 12px;
+            }
+
+            .preview-table th,
+            .preview-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>🔗 JSON Domain Prediction Aligner</h1>
+                <div class="subtitle">Align predictions to domains and export as CSV</div>
+            </div>
+            <div class="theme-toggle">
+                <label class="toggle-label">🌙 Dark</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="info-box">
+            ℹ️ Upload a JSON file with predictions and a TXT/CSV file with domains. Predictions will be aligned to domains in order.
+        </div>
+
+        <div class="upload-section">
+            <div class="file-input-group">
+                <label class="file-label">1. Mia Prediction (JSON or TXT)</label>
+                <div class="drop-zone" id="jsonDropZone">
+                    <div class="drop-zone-text">📄 Click to upload or drag and drop</div>
+                    <div class="drop-zone-text">JSON or TXT file</div>
+                    <div class="file-name" id="jsonFileName"></div>
+                    <input type="file" id="jsonFile" accept=".json,.txt">
+                </div>
+            </div>
+
+            <div class="file-input-group">
+                <label class="file-label">2. Domains File (TXT or CSV)</label>
+                <div class="drop-zone" id="domainsDropZone">
+                    <div class="drop-zone-text">📋 Click to upload or drag and drop</div>
+                    <div class="drop-zone-text">TXT or CSV file (one domain per row)</div>
+                    <div class="file-name" id="domainsFileName"></div>
+                    <input type="file" id="domainsFile" accept=".txt,.csv">
+                </div>
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="button-group" id="buttonGroup">
+            <button class="btn btn-primary" id="downloadBtn" onclick="downloadCSV()">
+                📥 Export CSV
+            </button>
+            <button class="btn btn-danger" id="clearAllBtn" onclick="clearAll()">
+                🔄 Clear All
+            </button>
+        </div>
+
+        <div class="preview" id="preview">
+            <div class="preview-title">Preview (first 10 alignments)</div>
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Domain</th>
+                        <th>Prediction</th>
+                    </tr>
+                </thead>
+                <tbody id="previewBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let jsonData = null;
+        let domainsData = [];
+        let alignedData = [];
+        let originalDomainsFileName = 'data';
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const jsonDropZone = document.getElementById('jsonDropZone');
+        const domainsDropZone = document.getElementById('domainsDropZone');
+        const jsonFile = document.getElementById('jsonFile');
+        const domainsFile = document.getElementById('domainsFile');
+        const statusDiv = document.getElementById('status');
+        const previewDiv = document.getElementById('preview');
+        const previewBody = document.getElementById('previewBody');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const jsonFileName = document.getElementById('jsonFileName');
+        const domainsFileName = document.getElementById('domainsFileName');
+
+        // Dark mode toggle
+        themeToggle.addEventListener('change', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        }
+
+        // File input listeners
+        jsonFile.addEventListener('change', handleJsonFile);
+        domainsFile.addEventListener('change', handleDomainsFile);
+
+        // Drag and drop for JSON
+        jsonDropZone.addEventListener('click', () => jsonFile.click());
+        jsonDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            jsonDropZone.classList.add('drag-over');
+        });
+
+        jsonDropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            jsonDropZone.classList.remove('drag-over');
+        });
+
+        jsonDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            jsonDropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                jsonFile.files = dataTransfer.files;
+                jsonFile.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        // Drag and drop for Domains
+        domainsDropZone.addEventListener('click', () => domainsFile.click());
+        domainsDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            domainsDropZone.classList.add('drag-over');
+        });
+
+        domainsDropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            domainsDropZone.classList.remove('drag-over');
+        });
+
+        domainsDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            domainsDropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                domainsFile.files = dataTransfer.files;
+                domainsFile.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        function handleJsonFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                jsonFileName.textContent = `✓ ${file.name}`;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        jsonData = JSON.parse(event.target.result);
+                        showStatus('✓ JSON file loaded', 'success');
+                        alignData();
+                    } catch (error) {
+                        showStatus(`Error parsing JSON: ${error.message}`, 'error');
+                        jsonData = null;
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function handleDomainsFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                domainsFileName.textContent = `✓ ${file.name}`;
+                originalDomainsFileName = file.name.replace(/\.(txt|csv)$/i, '');
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const lines = event.target.result.split('\n').filter(line => line.trim());
+                        domainsData = [];
+                        
+                        // Check if first line is header "domains"
+                        let startIndex = 0;
+                        if (lines.length > 0 && lines[0].toLowerCase().trim() === 'domains') {
+                            startIndex = 1;
+                        }
+                        
+                        // Extract domains
+                        for (let i = startIndex; i < lines.length; i++) {
+                            const domain = lines[i].trim();
+                            if (domain) {
+                                domainsData.push(domain);
+                            }
+                        }
+                        
+                        showStatus(`✓ Domains file loaded (${domainsData.length} domains)`, 'success');
+                        alignData();
+                    } catch (error) {
+                        showStatus(`Error reading domains: ${error.message}`, 'error');
+                        domainsData = [];
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function alignData() {
+            if (!jsonData || domainsData.length === 0) {
+                return;
+            }
+
+            alignedData = [];
+            const predictions = jsonData.prediction || [];
+
+            if (predictions.length !== domainsData.length) {
+                showStatus(`⚠️ Warning: ${predictions.length} predictions but ${domainsData.length} domains. Aligning as much as possible.`, 'info');
+            }
+
+            const alignCount = Math.min(predictions.length, domainsData.length);
+            for (let i = 0; i < alignCount; i++) {
+                alignedData.push({
+                    domain: domainsData[i],
+                    prediction: predictions[i]
+                });
+            }
+
+            displayPreview();
+            downloadBtn.classList.add('show');
+            document.getElementById('clearAllBtn').classList.add('show');
+            showStatus(`✓ Successfully aligned ${alignCount} domains with predictions`, 'success');
+        }
+
+        function displayPreview() {
+            previewBody.innerHTML = '';
+            const previewCount = Math.min(10, alignedData.length);
+            
+            for (let i = 0; i < previewCount; i++) {
+                const row = document.createElement('tr');
+                const item = alignedData[i];
+                row.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${escapeHtml(item.domain)}</td>
+                    <td>${escapeHtml(String(item.prediction))}</td>
+                `;
+                previewBody.appendChild(row);
+            }
+
+            previewDiv.style.display = 'block';
+        }
+
+        function clearAll() {
+            // Reset all data
+            jsonData = null;
+            domainsData = [];
+            alignedData = [];
+            originalDomainsFileName = 'data';
+            
+            // Clear file inputs
+            jsonFile.value = '';
+            domainsFile.value = '';
+            jsonFileName.textContent = '';
+            domainsFileName.textContent = '';
+            
+            // Clear preview
+            previewBody.innerHTML = '';
+            previewDiv.style.display = 'none';
+            
+            // Hide buttons
+            document.getElementById('downloadBtn').classList.remove('show');
+            document.getElementById('clearAllBtn').classList.remove('show');
+            
+            // Show success message
+            showStatus('✓ All cleared', 'success');
+        }
+
+        function downloadCSV() {
+            if (alignedData.length === 0) {
+                showStatus('No aligned data to download', 'error');
+                return;
+            }
+
+            let csv = 'domain,prediction\n';
+            
+            alignedData.forEach(item => {
+                csv += `${escapeCSV(item.domain)},${escapeCSV(String(item.prediction))}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${originalDomainsFileName}_mia-aligned.csv`;
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showStatus('✓ CSV downloaded successfully', 'success');
+        }
+
+        function escapeCSV(value) {
+            if (value === null || value === undefined) return '';
+            
+            const stringValue = String(value);
+            
+            if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+                return `"${stringValue.replace(/"/g, '""')}"`;
+            }
+            
+            return stringValue;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+            statusDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

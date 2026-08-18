@@ -1,4 +1,4 @@
-# Instructions - Tool 3 (Domain & Strings Analyzer)
+# Instructions - Tool 1 (Domain & Strings Analyzer)
 1) Open "domain_analyzer.html"
 2) Provide input domain list as CSV (without header row)
 3) Use tabs: "TLD Analysis" "Domain Length", or "N-Gram" or export the data as necessary.
