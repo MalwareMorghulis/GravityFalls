@@ -12,6 +12,11 @@
 
 # --------------------------------------------------------------------------------------------------------
 
+# Shannon & String tests can be done simply with the HTML tools provided.
+# See individual tool folders on how to run them.
+
+# --------------------------------------------------------------------------------------------------------
+
 # Install Tool Dependencies
 ## Python3, Git, Repo Refresh
 - $ sudo apt update
